@@ -1,0 +1,54 @@
+{
+  "expo": {
+    "name": "Aselsan",
+    "slug": "Aselsan",
+    "owner": "cyberistanbul",
+    "version": "1.0.1",
+    "orientation": "default",
+    "icon": "./assets/images/icon.png",
+    "scheme": "aselsanlazer",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "buildNumber": "1.0.1",
+      "supportsTablet": false,
+      "usesIcloudStorage": true,
+      "infoPlist": {
+        "CFBundleAllowMixedLocalizations": true,
+        "CFBundleLocalizations": ["tr", "en"],
+        "CFBundleDevelopmentRegion": "tr"
+      },
+      "bundleIdentifier": "com.cyberistanbul.aselsanlazer"
+    },
+
+    "android": {
+      "versionCode": 2,
+      "googleServicesFile": "./google-services.json",
+      "package": "com.cyberistanbul.aselsanlazer",
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECEIVE_BOOT_COMPLETED"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDURfe9PIYdyGyPEzDbBkqLLJhKd7oAWMw"
+        }
+      },
+      "useNextNotificationsApi": true
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    }
+  }
+}
