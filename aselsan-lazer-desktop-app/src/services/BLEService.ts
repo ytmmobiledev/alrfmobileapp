@@ -1,225 +1,243 @@
 import {
   AngleUnitTypes,
-  ArticleMode,
-  BatteryErrorTypes,
-  BluetoothActivityTypes, BluetoothErrorTypes, BluetoothSleepTime,
-  CompassActivityTypes, CompassErrorTypes, DeviceSleepTime, findType, Language, NightVisionMode,
-  OdometerActivityTypes,
-  OdometerErrorTypes, UnitTypes
+  DistanceUnitTypes
 } from "../constants/Config";
-import {MStore} from "../stores/MainStore";
+import {error} from "../functions/toast";
+import {findData} from "../functions/findData";
+import DeviceEventEmitter from "events";
+import {HexToBase64} from "../functions/Buffer";
+import {IStore} from "../stores/InstantStore";
+import {l_moment} from "../functions/cMoment";
 
-const values = {
-  serial_no:"342345",
-  version:"2.25",
-  temperature:"34.2",
-  odometer_activity:OdometerActivityTypes.Acik.value,
-  compass_activity:CompassActivityTypes.Kapali.value,
-  bluetooth_activity:BluetoothActivityTypes.Kapali.value,
-  odometer_error:OdometerErrorTypes.HataVar.value,
-  compass_error:CompassErrorTypes.BilgiYok.value,
-  bluetooth_error:BluetoothErrorTypes.HataYok.value,
-  battery_error:BatteryErrorTypes.PilGucuIyi.value,
-  distance_unit:UnitTypes.Metre.id,
-  article_mode:ArticleMode.Otomatik.id,
-  distance_and_compass:{
-    distance:5,
-    azimuth:170,
-    elevation:50,
-    roll:10
-  },
-  language:Language.Turkce.id,
-  angle_unit_type:AngleUnitTypes.Derece.id,
-  night_vision_mode:NightVisionMode.Kapali.id,
-  device_sleep_time:DeviceSleepTime["0"].id,
-  bluetooth_sleep_time:BluetoothSleepTime["0"].id,
-  lower_door_lock:3234,
-  top_door_lock:1234,
-  magnetic_declination_angle:45
+
+
+let exampleRes:any = {
+  serial_no:"tlEJEQU=",
+  device_version:"tREEESU=",
+  temperature:"tR4EBT0=",
+  pressure:"tmgEBAUFPQ==",
+  shot_counter:"tlMAAAIBPQ==",
+  statuses:"tRCjtAQ=",
+  distance_unit:"tSIAALM=",
+  article_mode:"tRgAAbM=",
+  distance_and_compass:"tR0AAIf/AKwQAEQzAAEEABUAGQ==",
+  language:"tRsAALM=",
+  angle_unit_type:"tSAAA7M=",
+  night_vision_mode:"tSQAAbM=",
+  device_sleep_time:"tSYABbM=",
+  bluetooth_sleep_time:"tSoABrM=",
+  bottom_door_lock:"tRUD6LM=",
+  top_door_lock:"tRcA6LM=",
+  magnetic_declination_angle:"tSwK87M="
 }
 
-
 class BLEService {
-  public static bleManager: any;
+  private device: any=null;
+  public characteristic: any=null;
   private static _this: BLEService;
+  private static event: DeviceEventEmitter = new DeviceEventEmitter()
 
-  private device: any = MStore.device;
+  private data = {
+    serial_no:"",
+    device_version:"",
+    temperature:"",
+    pressure:"",
+    shot_counter:"",
+    statuses:{
+      odometer_activity:{
+        title:"lazermesafeolceraktifligi",
+        value:null
+      },
+      compass_activity:{
+        title:"pusulaaktifligi",
+        value:null
+      },
+      bluetooth_activity:{
+        title:"bluetoothaktifligi",
+        value:null
+      },
+      odometer_error:{
+        title:"lazermesafeolcerhatabilgisi",
+        value:null
+      },
+      compass_error:{
+        title:"pusulahatabilgisi",
+        value:null
+      },
+      bluetooth_error:{
+        title:"bluetoothhatabilgisi",
+        value:null
+      },
+      battery_error:{
+        title:"bataryahatabilgisi",
+        value:null
+      }
+    },
+    distance_unit:"",
+    article_mode:"",
+    distance_and_compass:{
+      distance:0,
+      distance_unit:DistanceUnitTypes.Metre.id,
+      angle_unit:AngleUnitTypes.Derece.id,
+      azimuth:0,
+      elevation:0,
+      roll:0
+    },
+    language:"",
+    angle_unit_type:"",
+    night_vision_mode:"",
+    device_sleep_time:null,
+    bluetooth_sleep_time:null,
+    bottom_door_lock:0,
+    top_door_lock:0,
+    magnetic_declination_angle:0
+  }
+
 
   constructor() {
-
-    BLEService.bleManager = {}
     BLEService._this = this
   }
 
-
-
-  public async sendDataToDevice(data:string){
-    let device = BLEService._this.getDevice();
-    return new Promise((resolve, reject) => {
-      device?.writeCharacteristicWithResponseForService("","",data).then((res:any)=>{
-        resolve(res.value)
-      }).catch((e:any)=>{
-        reject(e)
-      })
-    })
+  public setData(new_data:any){
+    BLEService._this.data = {...BLEService._this.data,...new_data}
   }
-
-  public async scanDevices(){
-    return new Promise((resolve, reject) => {
-      BLEService.bleManager.startDeviceScan(null,{allowDuplicates: false},(error:any, scannedDevice:any)=>{
-        if(error) {
-          reject(error)
-        }else{
-          resolve(scannedDevice)
-        }
-      });
-    })
+  public getData(){
+    return BLEService._this.data
   }
-
-  public stopScanDevices(){
-    BLEService.bleManager.stopDeviceScan();
-  }
-
 
   public setDevice(device:any){
     BLEService._this.device = device
   }
+
   public getDevice(){
     return BLEService._this.device
   }
 
+  public async sendDataToDevice(_key:string,data:any){
 
 
+    IStore.setLogger({type:"send", key:_key, data, date:l_moment(), res:"sending...",})
 
-  public async getSerialNo(){
-    return values.serial_no
+    let device = BLEService._this.getDevice();
+    if(!device){
+      throw "no_connect1"
+    }
+
+    return new Promise((resolve, reject) => {
+      IStore.setLogger({type:"send", key:_key, data, date:l_moment(), res:"success",})
+
+      setTimeout(()=>{
+        IStore.setLogger({type:"receive", key:"", data:exampleRes[_key], date:l_moment(), res:"data received",})
+        const {key,value:res}:any = findData(exampleRes[_key])
+        IStore.setLogger({type:"receive", key, data:res, date:l_moment(), res:"success",})
+        BLEService._this.setData({[key]:res})
+
+        // @ts-ignore
+        BLEService.event.emit("monitor",{
+          key,
+          value:res,
+          all_data:BLEService._this.getData()
+        })
+
+        // @ts-ignore
+        BLEService.event.emit(key,res)
+
+        resolve(true)
+
+      },Math.floor((Math.random()*1000)+2000))
+    })
+
+    return new Promise((resolve, reject) => {
+
+      device.getPrimaryService('2456e1b9-26e2-8f83-e744-f34f01e9d701')
+          .then((service:any) => {
+            return service.getCharacteristic('battery_level');
+          })
+          .then((characteristic:any) => {
+            return characteristic.writeValue(HexToBase64(data));
+          })
+          .then(() => {
+            IStore.setLogger({type:"send", key:_key, data, date:l_moment(), res:"success",})
+            resolve(true)
+          })
+          .catch((e:any)=>{
+            IStore.setLogger({type:"send", key:_key, data, date:l_moment(), res:"error "+JSON.stringify(e),})
+
+            reject(e)
+            error()
+          })
+    })
+  }
+
+
+  public startListener(){
+
+    const device = BLEService._this.getDevice()
+
+    if(!device || device=="test")
+      throw "no_connect1"
+
+
+    device.addEventListener('gattserverdisconnected', ()=>{
+      BLEService._this.setDevice(null)
+    });
+
+
+    IStore.setLogger({type:"receive", key:"", data:"", date:l_moment(), res:"listener started",})
+
+
+    device.getPrimaryService('2456e1b9-26e2-8f83-e744-f34f01e9d701')
+        .then((service:any) => {
+          return service.getCharacteristic('battery_level');
+        })
+        .then((_characteristic:any) => {
+          BLEService._this.characteristic = _characteristic
+          BLEService._this.characteristic.addEventListener('characteristicvaluechanged',BLEService._this.onChangeListener);
+        })
+        .catch((e:any)=>{
+          console.warn(e)
+          error("Bağlantı Hatası")
+        })
 
   }
-  public async getDeviceVersion(){
-    return values.version+"v"
-  }
-  public async getTemperature(){
-    return values.temperature+"°"
-  }
-  public async getStatuses(){
-    return {
-      odometer_activity:{
-        title:"lazermesafeolceraktifligi",
-        value:values.odometer_activity
-      },
-      compass_activity:{
-        title:"pusulaaktifligi",
-        value:values.compass_activity
-      },
-      bluetooth_activity:{
-        title:"bluetoothaktifligi",
-        value:values.bluetooth_activity
-      },
-      odometer_error:{
-        title:"lazermesafeolcerhatabilgisi",
-        value:values.odometer_error
-      },
-      compass_error:{
-        title:"pusulahatabilgisi",
-        value:values.compass_error
-      },
-      bluetooth_error:{
-        title:"bluetoothhatabilgisi",
-        value:values.bluetooth_error
-      },
-      battery_error:{
-        title:"bataryahatabilgisi",
-        value:values.battery_error
-      },
 
+  public onChangeListener(event:any){
+    let value = event.target.value;
+
+    IStore.setLogger({type:"receive", key:"", data:value, date:l_moment(), res:"data received",})
+
+    if(value){
+
+      const {key,value:res}:any = findData(value)
+
+      IStore.setLogger({type:"receive", key, data:JSON.stringify(res), date:l_moment(), res:"success",})
+
+      BLEService._this.setData({[key]:res})
+
+      // @ts-ignore
+      BLEService.event.emit("monitor",{
+        key,
+        value:res,
+        all_data:BLEService._this.getData()
+      })
+
+      // @ts-ignore
+      BLEService.event.emit(key,res)
     }
   }
-  public async getDistanceAndDegree(){
-    return {
-      ...values.distance_and_compass,
-    }
+
+  public stopListener(){
+    try {
+      BLEService._this.characteristic.removeEventListener('characteristicvaluechanged',BLEService._this.onChangeListener);
+      BLEService._this.characteristic = null
+
+    }catch{}
   }
 
 
-  public async getDistanceUnit(){
-    return findType(UnitTypes,values.distance_unit,"value")
-  }
-  public async setDistanceUnit(id:number){
-    values.distance_unit = id
-    return await BLEService._this.getDistanceUnit()
-  }
 
-  public async getArticalMode(){
-    return findType(ArticleMode,values.article_mode,"value")
-  }
-  public async setArticalMode(id:number){
-    values.article_mode = id
-    return await BLEService._this.getArticalMode()
-  }
 
-  public async getLanguage(){
-    return findType(Language,values.language,"")
-  }
-  public async setLanguage(id:number){
-    values.language = id
-    return await BLEService._this.getLanguage()
-  }
 
-  public async getAngleUnitType(){
-    return findType(AngleUnitTypes,values.angle_unit_type,"")
-  }
-  public async setAngleUnitType(id:number){
-    values.angle_unit_type = id
-    return await BLEService._this.getAngleUnitType()
-  }
-
-  public async getNightVisionMode(){
-    return findType(NightVisionMode,values.night_vision_mode,"")
-  }
-  public async setNightVisionMode(id:number){
-    values.night_vision_mode = id
-    return await BLEService._this.getNightVisionMode()
-  }
-
-  public async getDeviceSleepTime(){
-    return findType(DeviceSleepTime,values.device_sleep_time,"")
-  }
-  public async setDeviceSleepTime(id:number){
-    values.device_sleep_time = id
-    return await BLEService._this.getDeviceSleepTime()
-  }
-
-  public async getBluetoothSleepTime(){
-    return findType(BluetoothSleepTime,values.bluetooth_sleep_time,"")
-  }
-  public async setBluetoothSleepTime(id:number){
-    values.bluetooth_sleep_time = id
-    return await BLEService._this.getBluetoothSleepTime()
-  }
-
-  public async getLowerDoorLock(){
-    return values.lower_door_lock
-  }
-  public async setLowerDoorLock(value:number){
-    values.lower_door_lock = value
-    return await BLEService._this.getLowerDoorLock()
-  }
-
-  public async getTopDoorLock(){
-    return values.top_door_lock
-  }
-  public async setTopDoorLock(value:number){
-    values.top_door_lock = value
-    return await BLEService._this.getTopDoorLock()
-  }
-
-  public async getMagneticDeclinationAngle(){
-    return values.magnetic_declination_angle
-  }
-  public async setMagneticDeclinationAngle(value:number){
-    values.magnetic_declination_angle = value
-    return await BLEService._this.getMagneticDeclinationAngle()
-  }
 }
 
 export default BLEService;

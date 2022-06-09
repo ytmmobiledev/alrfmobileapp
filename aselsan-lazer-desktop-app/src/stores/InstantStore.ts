@@ -1,6 +1,7 @@
 //@ts-nocheck
 import { observable, action } from "mobx";
 import BLEService from "../services/BLEService";
+import {setModalTypes} from "../componenets/SetModal";
 
 class InstantStoreC {
 
@@ -8,8 +9,10 @@ class InstantStoreC {
   @observable loading: boolean = false;
   @observable desc_modal: any = {};
   @observable custom_modal: any = {};
-  @observable set_modal: {visible:boolean,title?:string,description?:string,icon?:any,value?:any,options?:any,type:any,onChange:any} = {};
+  @observable set_modal: {visible:boolean,title?:string,description?:string,icon?:any,value?:any,options?:any,type:keyof typeof setModalTypes,numberParams:any,onChange:any} = {};
   @observable go_page: any = {};
+  @observable logger: any = [];
+  @observable tab_index: string = "olcum";
 
   @action setBLE(data: BLEService) {
     this.ble = data;
@@ -28,6 +31,13 @@ class InstantStoreC {
   }
   @action setGoPage(data: any) {
     this.go_page = data;
+  }
+  @action setLogger(data: any) {
+    //console.warn(data)
+    this.logger = [...this.logger,data];
+  }
+  @action setTabIndex(data: string) {
+    this.tab_index = data
   }
 }
 

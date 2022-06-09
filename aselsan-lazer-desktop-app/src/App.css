@@ -3,6 +3,7 @@
   height: 100vh;
   display:flex;
   flex:1;
+  background-color:#1e2227 ;
 }
 
 .App-logo {
@@ -78,4 +79,21 @@
 .flex-1 {
   display: flex;
   flex:1
+}
+.flex-2 {
+  display: flex;
+  flex:2
+}
+.flex-3 {
+  display: flex;
+  flex:3
+}
+
+.button{
+  padding:8px 16px;
+  border-radius:10px;
+  background-color:#024089;
+  font-size:18px;
+  font-weight:bold;
+  color:white;
 }

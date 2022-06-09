@@ -9,12 +9,12 @@ import {CImage} from "./CImage";
 import Modal from "react-native-modal";
 import Colors from "../constants/Colors";
 import {FontText} from "./FontText";
-import {UnitTypes} from "../constants/Config";
-import {MainStore} from "../stores/MainStore";
 import {Feather} from "@expo/vector-icons";
 import DashedLine from "react-native-dashed-line";
 import {useEffect, useState} from "react";
-import {Input, Textarea} from "native-base";
+import MaskInput, { createNumberMask } from 'react-native-mask-input';
+import {error} from "../functions/toast";
+import {l_moment} from "../functions/cMoment";
 
 export const setModalTypes = {
     Select:"select",
@@ -30,14 +30,24 @@ function SetModal() {
         value,
         options,
         type,
+        numberParams={},
         onChange=async (data:any)=>{}
     } = IStore.set_modal;
 
-    const [defaultValue,setDefaultValue] = useState(null)
+    const [defaultValue,setDefaultValue]:any = useState(null)
     const [loading,setLoading] = useState(false)
 
     useEffect(()=>{
-        setDefaultValue(value)
+
+        if(type==setModalTypes.Number){
+            let value1 = value.substr(0,value.length-numberParams?.fixed)
+            let value2 = value.substr(numberParams?.fixed*-1)
+            setDefaultValue([value1,value2])
+        }else{
+            setDefaultValue(value)
+        }
+
+
 
     },[value])
 
@@ -101,9 +111,9 @@ function SetModal() {
                                         />:
                                         type==setModalTypes.Number?
                                             <Number
+                                                numberParams={numberParams}
                                                 defaultValue={defaultValue}
                                                 onChange={(data:any)=>{
-
                                                     setDefaultValue(data)
                                                 }}
                                             />:null
@@ -119,8 +129,38 @@ function SetModal() {
                                             <ActivityIndicator style={{padding:hp(2)}} color="#667587" size="small"  />:
                                             <FontText
                                                 onPress={()=>{
+                                                    let value:any = defaultValue;
+
+
+                                                    if(type==setModalTypes.Number){
+                                                        let {fixed,min,max,unit=""} = numberParams;
+
+
+                                                        value = parseInt(parseInt(defaultValue[0]?defaultValue[0]:"0")+""+(fixed?parseInt(defaultValue[1]?defaultValue[1]:0):""))
+
+
+                                                        if(isNaN(value) || !/^-?\d+$/.test(value.toString())){
+                                                            error("Geçersiz Veri")
+                                                            return;
+                                                        }
+                                                        if(min!=undefined && value<min){
+                                                            if(fixed){
+                                                                min = min/Math.pow(10,fixed)
+                                                            }
+                                                            error("Minimum "+min+" "+unit)
+                                                            return;
+                                                        }
+                                                        if(max!=undefined && value>max){
+                                                            if(fixed){
+                                                                max = max/Math.pow(10,fixed)
+                                                            }
+                                                            error("Maximum "+max+" "+unit)
+                                                            return;
+                                                        }
+                                                    }
+
                                                     setLoading(true)
-                                                    onChange(defaultValue).then(()=>{
+                                                    onChange(value).then(()=>{
                                                         setLoading(false)
                                                         IStore.setSetModal({visible:false})
                                                     })
@@ -169,21 +209,56 @@ function Select({defaultValue, options,onChange}:any) {
 }
 
 
-function Number({defaultValue,onChange}:any) {
-    return(
-        <CView width={"100%"}>
-           <TextInput
-               style={{padding:hp(2), width:'100%',fontSize:hp(2),color:Colors.text, borderStyle:'dashed', borderWidth:1,borderRadius:1,borderColor:'#667587'}}
-               defaultValue={defaultValue?defaultValue.toString():""}
-               placeholderTextColor={Colors.text}
-               onChangeText={(text)=>{
-                   try {
-                       onChange(parseFloat(text))
-                   }catch (e) {
+function Number({defaultValue=[],onChange,numberParams={}}:any) {
+    const {fixed=0,min=0,max=0,unit=""} = numberParams;
 
-                   }
-               }}
-           />
+    let value1:any = defaultValue[0];
+    let value2:any = defaultValue[1];
+
+    return(
+
+        <CView  width={"100%"}>
+            <CView
+                row
+                vertical="center"
+                horizontal="space-between"
+                style={{borderStyle:'dashed', borderWidth:1,borderRadius:1,borderColor:'#667587'}}
+            >
+                <CView flex={1} row center >
+                    <TextInput
+                        keyboardType='decimal-pad'
+                        style={{flex:1, textAlign:fixed?"right":"center", padding:hp(2),paddingRight:0,fontSize:hp(2),color:Colors.text}}
+                        defaultValue={value1}
+                        placeholderTextColor={Colors.text}
+                        onChangeText={(value:any)=>{
+                            onChange([value,value2])
+                        }}
+
+
+                    />
+
+                    {
+                        fixed?
+                            <FontText padding="0 1" title={","} size={2} bold />:null
+                    }
+                    {
+                        fixed?
+                            <TextInput
+                                maxLength={fixed}
+                                keyboardType='decimal-pad'
+                                style={{flex:1,textAlign:'left', padding:hp(2),paddingLeft:0,fontSize:hp(2),color:Colors.text}}
+                                defaultValue={value2}
+                                placeholderTextColor={Colors.text}
+                                onChangeText={(value:any)=>{
+                                    onChange([value1,value])
+
+                                }}
+                            />:null
+                    }
+                </CView>
+                <FontText padding="0 1" title={unit} size={1.4} bold />
+            </CView>
+
         </CView>
     )
 }

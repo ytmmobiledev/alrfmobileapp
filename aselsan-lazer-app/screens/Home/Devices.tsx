@@ -16,8 +16,6 @@ export default function Devices({ navigation }: any) {
   }, []);
 
 
-
-
   return (
       <CView center color={"darkGray"} vertical="center" flex={1}>
         <FontText flex={1} title={"LOGO"} size={3.5} bold padding={"0 0 4 0"}/>

@@ -58,7 +58,6 @@ export default function Slide({navigation}:any) {
                 <CView margin="0.8" width={40} height={7} radius={100} color={page>=1?"primary":"lightBlack"}/>
                 <CView margin="0.8" width={40} height={7} radius={100} color={page>=2?"primary":"lightBlack"}/>
                 <CView margin="0.8" width={40} height={7} radius={100} color={page>=3?"primary":"lightBlack"}/>
-                <CView margin="0.8" width={40} height={7} radius={100} color={page>=4?"primary":"lightBlack"}/>
             </CView>
             <CButton
                 title={"devamet"} width={30}
@@ -66,7 +65,7 @@ export default function Slide({navigation}:any) {
                     if(page<slide.length){
                         setPage(page+1)
                     }else{
-                        goPage({navigation},"Root")
+                        goPage({navigation},"Startup")
                     }
                 }}
             />

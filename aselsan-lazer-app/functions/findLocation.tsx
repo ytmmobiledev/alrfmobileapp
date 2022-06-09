@@ -1,6 +1,13 @@
-const R = 6378.1 //Radius of the Earth
+import {angleConversion, distanceConversion} from "./Conversions";
+import {AngleUnitTypes, DistanceUnitTypes} from "../constants/Config";
 
-export function findLocation(lat1:number,lon1:number,distance:number,azimuth:number,elevation:number) {
+const R = 6378160 //Radius of the Earth
+
+export function findLocation(lat1:number,lon1:number,distance:number,azimuth:number,elevation:number,angle_unit:any,distance_unit:any) {
+  distance = distanceConversion(distance,distance_unit,DistanceUnitTypes.Metre.id).distance
+  azimuth = angleConversion(azimuth,angle_unit,AngleUnitTypes.Derece.id).angle
+  elevation = angleConversion(elevation,angle_unit,AngleUnitTypes.Derece.id).angle
+
 
   const H = ( Math.sqrt( Math.pow(R,2) + Math.pow(distance,2) - 2*R*distance*Math.cos((elevation+90)*(Math.PI/180)) ) ) //Hedefin Dünyanın merkezine olan uzaklığı
   const y_distance = H-R //Hedefin yerden yüksekliği
@@ -18,10 +25,12 @@ export function findLocation(lat1:number,lon1:number,distance:number,azimuth:num
 
   lat2 = lat2*(180/Math.PI)
   lon2 = lon2*(180/Math.PI)
+  //console.warn(lat2,lon2,distance,azimuth,elevation)
 
   return {
-    y_distance:parseFloat((y_distance).toString()).toFixed(3),
-    x_distance:parseFloat(x_distance.toString()).toFixed(3),
+    y_distance:distanceConversion(y_distance,DistanceUnitTypes.Metre.id,distance_unit).distance,
+    //x_distance:distanceConversion(x_distance,DistanceUnitTypes.Metre.id,distance_unit).distance,
+    x_distance:distanceConversion(distance,DistanceUnitTypes.Metre.id,distance_unit).distance,
     latitude:lat2,
     longitude:lon2
   }

@@ -11,60 +11,62 @@ import {findType} from "../../constants/Config";
 import {MaterialIcons} from "@expo/vector-icons";
 import {IStore} from "../../stores/InstantStore";
 import {Params} from "../../constants/Params";
-import {ActivityIndicator} from "react-native";
+import {ActivityIndicator, DeviceEventEmitter} from "react-native";
 import {useFocusEffect} from "@react-navigation/native";
 import {CButton} from "../../components/CButton";
 
-
 function Settings({ navigation }: any) {
-    const ble = IStore.ble
+    const ble = IStore.ble;
     const params = Params()
-    const [data,setData] = useState({
-        unit_type : params.unit_type,
-        article_modes : params.article_modes,
+    const usage_params = {
+        distance_unit : params.distance_unit,
+        article_mode : params.article_mode,
         language : params.language,
         angle_unit_type : params.angle_unit_type,
         night_vision_mode : params.night_vision_mode,
         device_sleep_time : params.device_sleep_time,
         bluetooth_sleep_time : params.bluetooth_sleep_time,
-        lower_door_lock : params.lower_door_lock,
+        bottom_door_lock : params.bottom_door_lock,
         top_door_lock : params.top_door_lock,
-        magnetic_declination_angle : params.magnetic_declination_angle,
-    })
-    const [small_loading,setSmallLoading] = useState(false)
+        magnetic_declination_angle : params.magnetic_declination_angle
+    }
+
+
+    const [data,setData] = useState(ble.getData())
     const [device_id,setDeviceID] = useState("loading")
 
 
     useFocusEffect(
         React.useCallback(() => {
-            setSmallLoading(true)
+            let listener = DeviceEventEmitter.addListener("monitor",({all_data})=>{
+                setData({...all_data})
+            })
             controlDevice()
+            return()=>{
+                listener.remove()
+            }
+
         }, [])
     );
 
 
     function controlDevice() {
-        const device = ble.getDevice();
-        setDeviceID(device?.id)
+        const device_id = ble.getDeviceID()
+        setDeviceID(device_id)
 
-        if(device?.id){
-            getValues().then(()=>{
-                setTimeout(()=>{
-                    setSmallLoading(false)
-                },2000)
-            })
+        if(device_id){
+            getValues()
+        }else{
+            navigation.navigate("ConnectDevice")
         }
+
     }
 
     async function getValues() {
-
-        return new Promise(async (resolve, reject)=>{
-            for(let [key,param] of Object.entries(data)){
-                param["value"] = await param.get()
-                setData({...data,[key]:param})
-            }
-            resolve(true)
-        })
+        for(let [key,param] of Object.entries(usage_params)){
+            if(param.getHex)
+                ble.sendDataToDevice(key,param.getHex).then(()=>{})
+        }
     }
 
     if(!device_id){
@@ -82,15 +84,6 @@ function Settings({ navigation }: any) {
         )
     }
 
-    if(device_id=="loading"){
-        return (
-            <CView flex={1} center color="darkGray">
-                <Spinner color={Colors.white} />
-            </CView>
-        )
-    }
-
-
     return (
         <Container style={{backgroundColor:Colors.darkGray}} >
             <Content bounces={false}>
@@ -99,14 +92,13 @@ function Settings({ navigation }: any) {
 
                     <CView padding="3"  width="100%" row vertical="center" horizontal="space-between">
                         <FontText title={"ayarlar"} size={2.2} bold color="primary"/>
-                        {
-                            small_loading?
-                                <ActivityIndicator color={Colors.white} />:null
-                        }
+
                     </CView>
                     <CView padding="0.5" width="90%" radius={10} >
                         {
-                            Object.entries(data).map(([key,{set,title,value,options,type}],index:number)=>{
+                            Object.entries(usage_params).map(([key,{title,setHex=(id:number)=>{},options,type,numberParams={}}]:any,index:number)=>{
+                                const value = data[key]
+
                                 return (
                                     <CView
                                         key={index} row vertical="center" horizontal="space-between" padding="1"  margin="1 0" radius={10} color="secondary"
@@ -118,28 +110,11 @@ function Settings({ navigation }: any) {
                                                     title,
                                                     value:value?.id??value,
                                                     type,
+                                                    numberParams,
                                                     options:options?Object.values(options):null,
-                                                    onChange:async (id)=>{
-
-                                                        const res:any = await set(id)
-                                                        if(res?.id){
-                                                            let value = findType(options,res.id,"");
-                                                            if(!value)
-                                                                return;
-                                                            data[key]["value"] = value
-                                                            setData({...data})
-                                                        }else{
-                                                            let value =res
-                                                            if(!value)
-                                                                return;
-                                                            data[key]["value"] = value
-                                                            setData({...data})
-                                                        }
-
-
-
-                                                        return true
-
+                                                    onChange:async (id:number)=>{
+                                                        await ble.sendDataToDevice(key,setHex(id))
+                                                        return true;
                                                     }
                                                 })
                                             }
@@ -149,7 +124,7 @@ function Settings({ navigation }: any) {
                                         <CView row center>
                                             {
                                                 value?
-                                                    <FontText padding="1" title={value?.value??value}  size={1.7} />:
+                                                    <FontText padding="1" title={value?.value?? (numberParams?.fixed?(value/(numberParams?.fixed*10)):value) +""+ (numberParams?.unit?(" "+numberParams?.unit):"")}  size={1.7} />:
                                                     <ActivityIndicator style={{alignSelf:'flex-start',padding:hp(1)}} color="#667587" size="small"  />
                                             }
                                             <MaterialIcons name="navigate-next" size={hp(4)} color={Colors.text} />
@@ -166,6 +141,8 @@ function Settings({ navigation }: any) {
         </Container>
     );
 }
+
+
 
 
 export default observer(Settings)

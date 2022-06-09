@@ -34,7 +34,7 @@ const HomeScreenType = observer(()=>{
                         <CView
                             width={"100%"} key={id}
                             onPress={()=>{
-                                MainStore.setSettings({home_screen_type:id})
+                                MainStore.setSettings({...MainStore.settings, home_screen_type:id})
                             }}
                         >
                             <CView padding="1" width="100%" row vertical="center" horizontal="space-between">
@@ -218,7 +218,8 @@ function MoreInfo({ navigation }: any) {
                         <FontText title={"cihazabaglan"} size={1.8} bold color={"text"}/>
                         <MaterialIcons name="navigate-next" size={hp(3)} color={Colors.text} />
                     </CView>
-                    <CView
+                    {
+                        /*<CView
                         margin="0 0 0 3" color="secondary" row vertical="center" horizontal="space-between" padding="1.8 2.2" width="80%" radius={8}
                         onPress={()=>{
                             IStore.setCustomModal({
@@ -230,7 +231,8 @@ function MoreInfo({ navigation }: any) {
                     >
                         <FontText title={"manuel"} size={1.8} bold color={"text"}/>
                         <MaterialIcons name="navigate-next" size={hp(3)} color={Colors.text} />
-                    </CView>
+                    </CView>*/
+                    }
                     <CView
                         margin="0 0 0 6" color="secondary" row vertical="center" horizontal="space-between" padding="1.8 2.2" width="80%" radius={8}
                         onPress={()=>{

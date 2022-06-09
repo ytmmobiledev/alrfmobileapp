@@ -1,0 +1,32 @@
+{
+  "files": {
+    "main.css": "./static/css/main.6bf453cb.chunk.css",
+    "main.js": "./static/js/main.e192a38b.chunk.js",
+    "main.js.map": "./static/js/main.e192a38b.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.707767bd.js",
+    "runtime-main.js.map": "./static/js/runtime-main.707767bd.js.map",
+    "static/css/2.337f06a3.chunk.css": "./static/css/2.337f06a3.chunk.css",
+    "static/js/2.26561437.chunk.js": "./static/js/2.26561437.chunk.js",
+    "static/js/2.26561437.chunk.js.map": "./static/js/2.26561437.chunk.js.map",
+    "index.html": "./index.html",
+    "static/css/2.337f06a3.chunk.css.map": "./static/css/2.337f06a3.chunk.css.map",
+    "static/css/main.6bf453cb.chunk.css.map": "./static/css/main.6bf453cb.chunk.css.map",
+    "static/js/2.26561437.chunk.js.LICENSE.txt": "./static/js/2.26561437.chunk.js.LICENSE.txt",
+    "static/media/antd.less": "./static/media/antd.7affb7a1.less",
+    "static/media/bg.png": "./static/media/bg.90576cf7.png",
+    "static/media/bg1.png": "./static/media/bg1.b6dac7ae.png",
+    "static/media/bg2.png": "./static/media/bg2.983592a0.png",
+    "static/media/button.png": "./static/media/button.7bc56b2b.png",
+    "static/media/compass.png": "./static/media/compass.d6e05594.png",
+    "static/media/olcum.png": "./static/media/olcum.0021e037.png",
+    "static/media/placeholder.png": "./static/media/placeholder.64cdcb0e.png",
+    "static/media/secili-dahafazla.png": "./static/media/secili-dahafazla.59da1d61.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.707767bd.js",
+    "static/css/2.337f06a3.chunk.css",
+    "static/js/2.26561437.chunk.js",
+    "static/css/main.6bf453cb.chunk.css",
+    "static/js/main.e192a38b.chunk.js"
+  ]
+}

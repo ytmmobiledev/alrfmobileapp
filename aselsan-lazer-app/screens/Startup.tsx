@@ -1,33 +1,40 @@
 import * as React from "react";
 import Colors from "../constants/Colors";
 import { Spinner } from "native-base";
-import { useEffect } from "react";
 import { CView } from "../components/CView";
 import {MainStore} from "../stores/MainStore";
-import BLEService from "../services/BLEService";
 import {IStore} from "../stores/InstantStore";
+import {goPage} from "../functions/goPage";
+import {useFocusEffect} from "@react-navigation/native";
 
 export default function Startup(props: any) {
   const { navigation }=props
 
-  const ble = IStore.ble;
 
-  useEffect(() => {
-    setTimeout(() => {
+  useFocusEffect(
+      React.useCallback(() => {
+        setTimeout(() => {
+          controlData();
+        }, 1000);
+      }, [])
+  );
 
-      controlData();
-    }, 3000);
-  }, []);
 
   function controlData() {
 
-    ble.setDevice(MainStore.device)
-
     if(MainStore.first){
       MainStore.setFirst(false)
-      navigation.navigate("Slide")
+      goPage({navigation},"Slide")
     }else{
-      navigation.navigate("Root")
+
+      let device_id = IStore.ble.getDeviceID()
+
+      if(device_id){
+        goPage({navigation},"Root")
+      }else{
+        navigation.navigate("ConnectDevice")
+      }
+
     }
   }
 

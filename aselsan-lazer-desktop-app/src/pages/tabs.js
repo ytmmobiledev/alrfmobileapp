@@ -8,13 +8,17 @@ import {string} from "../locales";
 import Measure from "./measure";
 import Device from "./device";
 import LaserMeter from "./laserMeter";
+import {IStore} from "../stores/InstantStore";
+import {observer} from "mobx-react-lite";
+import Setting from "./setting";
 
 const Tabs = () => {
 
-    const [page,setPage] = useState("olcum")
 
     useEffect(()=>{
     },[])
+
+    const page = IStore.tab_index
 
     return (
         <div style={{backgroundColor:Colors.darkGray, height: '100vh', width: '100%' }}>
@@ -24,8 +28,10 @@ const Tabs = () => {
                         <Measure/>:
                         page=="cihaz"?
                             <Device/>:
-                            page=="lazer"?
-                                <LaserMeter/>:null
+                            page=="yapilandirici"?
+                                <Setting/>:
+                                page=="lazer"?
+                                    <LaserMeter/>:null
                 }
             </div>
             <div style={{position: 'fixed', bottom: 0, left: 0, right: 0 }}>
@@ -54,8 +60,9 @@ const Tabs = () => {
                             }
                         }
                     }}
+
                     onChange={(event, newValue) => {
-                        setPage(newValue);
+                        IStore.setTabIndex(newValue)
                     }}
                 >
                     <BottomNavigationAction value={"olcum"} label={string.olcum2} icon={ <img src={require("../assets/images/goz.png").default} style={{...page=="olcum"?{}:{filter:"opacity(0.4)"}, width:30,height:30}}/>} />
@@ -70,4 +77,4 @@ const Tabs = () => {
 }
 
 
-export default Tabs
+export default observer(Tabs)

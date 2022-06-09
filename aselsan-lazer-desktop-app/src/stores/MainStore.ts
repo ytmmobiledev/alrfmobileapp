@@ -7,7 +7,6 @@ import {HomeScreenTypes} from "../constants/Config";
 class MainStoreC {
 
   @persist @observable first: boolean = true;
-  @persist("object") @observable device:any = {device_id:"test"};
   @persist("object") @observable settings:any = {
     home_screen_type:HomeScreenTypes.MesafeVePusula.id,
     lock_screen:false
@@ -17,9 +16,6 @@ class MainStoreC {
 
   @action setFirst(data: boolean) {
     this.first = data;
-  }
-  @action setDevice(data: any) {
-    this.device = data;
   }
   @action setSettings(data: any) {
     this.settings = {...this.settings,...data};

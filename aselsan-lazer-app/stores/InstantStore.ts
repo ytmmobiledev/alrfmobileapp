@@ -14,8 +14,10 @@ class InstantStoreC {
   loading: boolean = false;
   desc_modal: any = {};
   custom_modal: any = {};
-  set_modal: {visible:boolean,title?:string,description?:string,icon?:any,value?:any,options?:any,type:keyof typeof setModalTypes,onChange:any} = {};
+  set_modal: {visible:boolean,title?:string,description?:string,icon?:any,value?:any,options?:any,type:keyof typeof setModalTypes,numberParams:any,onChange:any} = {};
   go_page: any = {};
+  logger: any = [];
+
 
   setBLE(data: BLEService) {
     this.ble = data;
@@ -35,6 +37,10 @@ class InstantStoreC {
   setGoPage(data: any) {
     this.go_page = data;
   }
+  setLogger(data: any) {
+    this.logger = [...this.logger,data];
+  }
+
 }
 
 export const IStore = new InstantStoreC();

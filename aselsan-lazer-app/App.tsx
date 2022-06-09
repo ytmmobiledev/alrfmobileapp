@@ -18,6 +18,10 @@ import { IStore } from "./stores/InstantStore";
 import CToast from "./components/CToast";
 import Colors from "./constants/Colors";
 import SetModal from "./components/SetModal";
+import Logger from "./components/Logger";
+
+
+
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -96,13 +100,17 @@ export default function App() {
   } else {
     return (
       <SafeAreaProvider style={{backgroundColor:Colors.darkGray}}>
+        <Logger/>
         <Navigation colorScheme={colorScheme} />
         <StatusBar  style={"light"} backgroundColor={Colors.primary}/>
+
         <Loading />
         <DescriptionModal />
         <CustomModal />
         <SetModal />
+
         <CToast />
+
       </SafeAreaProvider>
     );
   }

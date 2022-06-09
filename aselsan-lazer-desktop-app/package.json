@@ -1,18 +1,37 @@
 {
-  "name": "your-app-name",
-  "version": "0.1.0",
-  "description": "Simple boilerplate for developing an Electron app with React",
-  "author": "your name",
+  "name": "Aselsan",
+  "version": "0.2.0",
+  "description": "Lazer mesafe ölçer",
+  "author": "aselsan",
   "build": {
-    "appId": "react.electron",
+    "appId": "com.cyberistanbul.aselsan",
+    "mac": {
+      "target": "dmg",
+      "category": "demo"
+    },
+    "files": [
+      {
+        "from": "./",
+        "to": "./",
+        "filter": [
+          "**/*",
+          "!node_modules"
+        ]
+      }
+    ],
+    "directories": {
+      "buildResources": "public"
+    },
     "win": {
-      "icon": "build/icon.png"
+      "target": "nsis",
+      "icon": "dist/logo.png"
     }
   },
   "main": "public/electron.js",
   "homepage": "./",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@babel/plugin-proposal-class-properties": "7.13.0",
     "@babel/plugin-proposal-decorators": "7.13.5",
     "@emotion/react": "^11.9.0",
@@ -24,6 +43,8 @@
     "@types/react-dom": "^18.0.4",
     "antd": "^4.20.6",
     "cross-env": "^7.0.3",
+    "crypto-es": "^1.2.7",
+    "dotenv": "^16.0.1",
     "electron-is-dev": "^1.2.0",
     "google-map-react": "^2.1.10",
     "mobx": "5.15.6",
@@ -32,12 +53,16 @@
     "mobx-react": "6.3.0",
     "mobx-react-lite": "2.2.2",
     "moment": "^2.29.3",
+    "node-sass": "^7.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-geolocated": "^4.0.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "reactjs-bottom-navigation": "^1.0.4",
-    "typescript": "^4.6.4"
+    "swiper": "^8.2.1",
+    "typescript": "^4.6.4",
+    "webpack-set-environment": "^1.0.1"
   },
   "scripts": {
     "start-react": "react-app-rewired start",
@@ -45,7 +70,7 @@
     "test-react": "react-app-rewired test --env=jsdom",
     "eject-react": "react-app-rewired eject",
     "build-electron": "electron-builder",
-    "build": "yarn build-react && yarn build-electron",
+    "build": "yarn build-react && rm -rf dist && yarn build-electron",
     "start": "concurrently \"cross-env BROWSER=none yarn start-react\" \"wait-on http://localhost:3000 && electron .\""
   },
   "eslintConfig": {
@@ -67,9 +92,10 @@
     "babel-plugin-import": "1.13.0",
     "concurrently": "^5.3.0",
     "customize-cra": "0.9.1",
-    "electron": "^11.1.1",
-    "electron-builder": "^22.9.1",
+    "electron": "^19.0.1",
+    "electron-builder": "^23.0.3",
     "react-app-rewired": "2.1.5",
+    "use-stay-awake": "^0.1.7",
     "wait-on": "^5.2.1"
   }
 }

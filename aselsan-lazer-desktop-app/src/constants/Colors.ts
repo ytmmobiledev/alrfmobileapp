@@ -9,6 +9,8 @@ export default {
   darkGray: "#1e2227",
   lightBlack: "#0f1013",
   text:"#a4a5a2",
+  red:"#B71C1C",
+  green:"#2E7D32",
   transparent: "transparent",
 };
 
