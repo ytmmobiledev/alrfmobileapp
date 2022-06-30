@@ -138,7 +138,6 @@ function LaserMeter({ navigation }: any) {
                 old_heading=trueHeading;
                 setHeading(trueHeading)
 
-
                 if(_compass){
                     try {
                         map.current.animateCamera({
@@ -373,17 +372,30 @@ function LaserMeter({ navigation }: any) {
                                                    </CView>
                                                 </CView>
                                                 <CView flex={1} width="90%" margin="1" row vertical="center" horizontal="space-around">
-                                                    <CView flex={1} center>
+                                                    <CView
+                                                        flex={1} center
+                                                        onPress={()=>{
+                                                            IStore.setCustomModal({
+                                                                visible:true,
+                                                                children:()=><CView center>{
+                                                                    location?.latitude && location?.longitude?
+                                                                        <CView  center>
+
+                                                                            <FontText padding="0 0 0 2" position="center" title={"KONUMUM"} underline size={2} color="white" bold />
+                                                                            <FontText position="center" title={ConvertDDToDMS(location.latitude)+" N"} size={1.8} color="white" bold />
+                                                                            <FontText position="center" title={ConvertDDToDMS(location.longitude)+" E"} size={1.8} color="white" bold />
+                                                                        </CView>:null
+                                                                }</CView>
+                                                            })
+                                                        }}
+                                                    >
                                                         <CView center width={hp(3)} height={hp(3)} radius={100} color="primary">
                                                             <CView width={hp(2.5)} height={hp(2.5)} radius={100} color="primary" style={{borderWidth:1.5,borderColor:Colors.white}}/>
                                                         </CView>
-                                                        {
-                                                            location?.latitude && location?.longitude?
-                                                                <CView  center>
-                                                                    <FontText position="center" title={ConvertDDToDMS(location.latitude)+" N"} size={1.6} color="white" bold />
-                                                                    <FontText position="center" title={ConvertDDToDMS(location.longitude)+" E"} size={1.6} color="white" bold />
-                                                                </CView>:null
-                                                        }
+                                                        <CView center>
+                                                            <FontText title={"Konumumu Gör"} position="center" size={1.6} color="white" bold />
+                                                        </CView>
+
                                                     </CView>
                                                     <CView flex={1.5} height={10} horizontal="center">
                                                         <FontText title={"test"} size={2}/>

@@ -3,7 +3,7 @@
     "name": "Aselsan",
     "slug": "Aselsan",
     "owner": "cyberistanbul",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "aselsanlazer",
@@ -19,8 +19,18 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "plugins": [
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
+          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+          "isAccessMediaLocationEnabled": "true"
+        }
+      ]
+    ],
     "ios": {
-      "buildNumber": "1.0.1",
+      "buildNumber": "1.0.2",
       "supportsTablet": false,
       "usesIcloudStorage": true,
       "infoPlist": {
@@ -32,7 +42,7 @@
     },
 
     "android": {
-      "versionCode": 2,
+      "versionCode": 3,
       "googleServicesFile": "./google-services.json",
       "package": "com.cyberistanbul.aselsanlazer",
       "permissions": [

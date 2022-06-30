@@ -1,15 +1,19 @@
 import * as React from "react";
 
 import { observer } from "mobx-react-lite";
+import {ScrollView, Share} from "react-native";
 import { IStore } from "../stores/InstantStore";
 import {FlatList, StatusBar, TouchableOpacity, View} from "react-native";
 import {hp} from "../functions/responsiveScreen";
 import Modal from "react-native-modal";
 import Colors from "../constants/Colors";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {FontText} from "./FontText";
 import {CView} from "./CView";
 import {l_moment} from "../functions/cMoment";
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
+import {AntDesign, Entypo} from "@expo/vector-icons";
 
 function Logger() {
     const [visible,setVisible] = useState(false)
@@ -20,6 +24,44 @@ function Logger() {
 
 
     const data = IStore.logger;
+
+    const onShare = async () => {
+        try {
+
+            let fileUri = FileSystem.documentDirectory + "aselsan_log.txt";
+
+            let text = "";
+
+            for(let {type,date,data,key,res} of [...IStore.logger]){
+                text+="\n\n"
+                if(Array.isArray(data)){
+                    data = "["+data.map((e:any)=>e.toString(16).toUpperCase())+"]"
+                }
+
+                text+=type+" "+l_moment(date).format("HH:mm:ss")+"\n";
+                if(key)
+                    text+=key+"\n";
+                if(res)
+                    text+=res+"\n";
+               if(data)
+                   text+=JSON.stringify(data)+"\n";
+
+            }
+
+
+            await FileSystem.writeAsStringAsync(fileUri, text, { encoding: FileSystem.EncodingType.UTF8 });
+
+            if(fileUri){
+                await Sharing.shareAsync(fileUri,{})
+            }
+
+
+        }catch (e) {
+            console.warn(e)
+        }
+
+    };
+
     return (
         <CView style={{paddingTop:StatusBar.currentHeight}}>
             <CView center onPress={()=>{setVisible(true)}}  padding="2" color="primary">
@@ -42,6 +84,7 @@ function Logger() {
                         justifyContent: "center",
                         alignItems: "center",
                     }}
+
                 >
                     <View
                         style={{
@@ -51,11 +94,22 @@ function Logger() {
                             width: "85%",
                             borderRadius: 10,
                         }}
+
                     >
-                        <CView style={{alignSelf:'flex-end'}} padding="2" onPress={()=>{setVisible(false)}}>
-                            <FontText title={"X"} size={2.5} color="white" />
+                        <CView row vertical="center" horizontal="space-between">
+                            <CView style={{alignSelf:'flex-end'}} padding="2" onPress={()=>{
+                                onShare()
+                            }}>
+                                <Entypo name="share" size={hp(2.8)} color="white" />
+
+                            </CView>
+                            <CView style={{alignSelf:'flex-end'}} padding="2" onPress={()=>{setVisible(false)}}>
+                                <AntDesign name="closecircleo" size={hp(2.8)} color="white" />
+                            </CView>
                         </CView>
+
                         <FlatList
+
                             inverted
                             data={[...data].reverse()}
                             keyExtractor={(_,index)=>index.toString()}

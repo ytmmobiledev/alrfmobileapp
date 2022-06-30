@@ -189,7 +189,11 @@ function findDistanceAndCompass(value:any) {
   const distance1 = ((value[3] << 16) | (value[4] << 8)  | value[5])/100;
   const distance2 = ((value[6] << 16) | (value[7] << 8)  | value[8])/100;
   const distance3 = ((value[9] << 16) | (value[10] << 8)  | value[11])/100;
-  const distance = [...distance1?[distance1]:[],...distance2?[distance2]:[],...distance3?[distance3]:[]]
+  let distance = [...distance1?[distance1]:[],...distance2?[distance2]:[],...distance3?[distance3]:[]]
+
+  if(!Array.isArray(distance) || !distance.length){
+    distance=[0]
+  }
 
   const angle_unit = findType(AngleUnitTypes,value[12],"id")
   let azimuth = (value[13] << 8)  | (value[14]);

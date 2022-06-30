@@ -131,9 +131,9 @@ function BottomTabNavigator() {
         <BottomTab.Navigator
             screenOptions={{
                 tabBarActiveTintColor: Colors.primary,
-                tabBarInactiveTintColor: 'white',
+                tabBarInactiveTintColor: Colors.primary,
                 tabBarActiveBackgroundColor:  Colors.primary,
-                tabBarInactiveBackgroundColor: 'red',
+                tabBarInactiveBackgroundColor: Colors.primary,
                 title:"",
                 headerStyle:{backgroundColor:Colors.darkGray,elevation:0,shadowColor:Colors.darkGray},
 
@@ -141,7 +141,7 @@ function BottomTabNavigator() {
             initialRouteName="1"
             tabBar={(props) => (
                 <BottomFabBar
-
+                    color={Colors.primary}
                     mode={'default'}
                     focusedButtonStyle={{
                         shadowColor: '#000',
@@ -152,12 +152,15 @@ function BottomTabNavigator() {
                         shadowOpacity: 0.41,
                         shadowRadius: 9.11,
                         elevation: 14,
+                        backgroundColor:Colors.primary,
+
                     }}
                     bottomBarContainerStyle={{
                         position: 'absolute',
                         bottom: 0,
                         left: 0,
                         right: 0,
+
                     }}
                     {...props}
                 />

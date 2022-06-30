@@ -3717,6 +3717,14 @@ expo-manifests@~0.2.2:
   dependencies:
     expo-json-utils "~0.2.0"
 
+expo-media-library@~13.0.3:
+  version "13.0.3"
+  resolved "https://registry.yarnpkg.com/expo-media-library/-/expo-media-library-13.0.3.tgz#1334d1bb0e81178a4c4cd8c1e018d45baada744b"
+  integrity sha512-TCSqp9s8AmygN2SuTddkpO2jVEuqqKkzi7QRiB+Duoq7ZQFL6pGujBEpklQEgp7LqBlO1WOrY+pokOu0oabXdA==
+  dependencies:
+    "@expo/config-plugins" "^4.0.2"
+    expo-modules-core "~0.4.4"
+
 expo-modules-autolinking@~0.3.4:
   version "0.3.4"
   resolved "https://registry.yarnpkg.com/expo-modules-autolinking/-/expo-modules-autolinking-0.3.4.tgz#25ce32ca933fedab2a5eb139e91327d123aa6066"
@@ -3764,6 +3772,13 @@ expo-notifications@~0.13.3:
     fs-extra "^9.0.1"
     unimodules-task-manager-interface "~7.0.3"
     uuid "^3.4.0"
+
+expo-sharing@~10.0.3:
+  version "10.0.3"
+  resolved "https://registry.yarnpkg.com/expo-sharing/-/expo-sharing-10.0.3.tgz#21124d40f761bbde746eeab05d58d2d1f16397f9"
+  integrity sha512-ZiXmirRVznbrrc0ztfNj+IV9bzUaeMqubEJSrnl/lIBXPPQNSSvDehe7hmPf7c7tHH6q4ebR/hlExkNgjz93wA==
+  dependencies:
+    expo-modules-core "~0.4.4"
 
 expo-splash-screen@~0.13.5:
   version "0.13.5"
@@ -7148,6 +7163,11 @@ react-native-vector-icons@^7.0.0:
     lodash.template "^4.5.0"
     prop-types "^15.7.2"
     yargs "^15.0.2"
+
+react-native-view-shot@3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-view-shot/-/react-native-view-shot-3.1.2.tgz#8c8e84c67a4bc8b603e697dbbd59dbc9b4f84825"
+  integrity sha512-9u9fPtp6a52UMoZ/UCPrCjKZk8tnkI9To0Eh6yYnLKFEGkRZ7Chm6DqwDJbYJHeZrheCCopaD5oEOnRqhF4L2Q==
 
 react-native-web@0.17.1:
   version "0.17.1"

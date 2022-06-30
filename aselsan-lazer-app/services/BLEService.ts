@@ -21,7 +21,7 @@ let exampleRes:any = {
   statuses:"tRAHqoo=",
   distance_unit:"tSIAALM=",
   article_mode:"tRgAAbM=",
-  distance_and_compass:"tR0AAIf/AKwQAEQzAAEEABUAGQ==",
+  distance_and_compass:"tR0AAAAAAAAAAAAAAAXzARIDHQM=",
   language:"tRsAALM=",
   angle_unit_type:"tSAAA7M=",
   night_vision_mode:"tSQAAbM=",

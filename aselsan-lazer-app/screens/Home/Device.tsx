@@ -98,17 +98,17 @@ function Device({ navigation }: any) {
         setDeviceID(device_id)
 
         if(device_id){
-            getValues()
+            await getValues()
         }else{
             navigation.navigate("ConnectDevice")
         }
     }
 
-    function getValues() {
+    async function getValues() {
 
         for(let [key,param] of Object.entries(usage_params)){
             if(param.getHex)
-                ble.sendDataToDevice(key,param.getHex).then(()=>{})
+                await ble.sendDataToDevice(key,param.getHex)
         }
     }
 
