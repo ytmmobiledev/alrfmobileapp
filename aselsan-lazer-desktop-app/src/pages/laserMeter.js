@@ -11,6 +11,7 @@ import {distanceConversion} from "../functions/Conversions";
 import {useHistory} from "react-router-dom";
 import {string} from "../locales";
 import {DistanceUnitTypes} from "../constants/Config";
+import {ipcRenderer} from "electron";
 
 
 let _compass = false
@@ -25,8 +26,8 @@ const coords = {
     altitude: 124.65,
     altitudeAccuracy: 3.5,
     heading: null,
-    latitude: 41.0621346,
-    longitude: 28.9844027,
+    latitude: 0,
+    longitude: 0,
     speed: null,
 }
 
@@ -53,31 +54,9 @@ const LaserMeter = () => {
     useEffect(()=>{
 
         try {
+            ipcRenderer.send("get-location",null)
+            ipcRenderer.on("find-location",getLocation);
 
-            setTimeout(()=>{
-                _location={
-                    ...coords,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
-                }
-                setLocation(_location);
-
-
-            },1000)
-
-            /*navigator.geolocation.getCurrentPosition(({coords})=>{
-                console.warn(coords)
-
-                _location={
-                    latitude: coords.latitude,
-                    longitude: coords.longitude,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
-                }
-                setLocation(_location);
-            },(e)=>{
-                console.warn(e)
-            },{ enableHighAccuracy:true });*/
         }catch (e) {
         }
 
@@ -86,8 +65,26 @@ const LaserMeter = () => {
 
         return()=>{
             BLEService.event.removeListener("distance_and_compass",_setData)
+            ipcRenderer.removeListener("find-location",getLocation)
         }
     },[])
+
+    async function getLocation(e,res){
+        console.warn(res)
+        _location={
+            ...coords,
+            latitude: parseFloat(res[0].replace(",",".")),
+            longitude: parseFloat(res[1].replace(",",".")),
+            altitude: parseFloat(res[2].replace(",",".")),
+            accuracy: parseFloat(res[3].replace(",",".")),
+            altitudeAccuracy: parseFloat(res[4].replace(",",".")),
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+        }
+        setLocation(_location);
+        await ble.sendDataToDevice("distance_and_compass",param.distance_and_compass.getHex)
+    }
+
 
     function _setData({distance,distance_unit,angle_unit,azimuth,elevation,roll}){
 
@@ -165,7 +162,8 @@ const LaserMeter = () => {
 
         info("Atış Yapılıyor...")
         setLoading(true)
-        await ble.sendDataToDevice("distance_and_compass",param.distance_and_compass.getHex)
+        ipcRenderer.send("get-location",null)
+
 
     }
 

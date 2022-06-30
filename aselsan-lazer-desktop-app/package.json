@@ -24,7 +24,12 @@
     },
     "win": {
       "target": "nsis",
-      "icon": "dist/logo.png"
+      "extraFiles": [
+        {
+          "from": "./public/Core",
+          "to": "."
+        }
+      ]
     }
   },
   "main": "public/electron.js",
@@ -45,6 +50,7 @@
     "cross-env": "^7.0.3",
     "crypto-es": "^1.2.7",
     "dotenv": "^16.0.1",
+    "electron-cgi": "^1.0.6",
     "electron-is-dev": "^1.2.0",
     "google-map-react": "^2.1.10",
     "mobx": "5.15.6",
@@ -70,8 +76,9 @@
     "test-react": "react-app-rewired test --env=jsdom",
     "eject-react": "react-app-rewired eject",
     "build-electron": "electron-builder",
-    "build": "yarn build-react && rm -rf dist && yarn build-electron",
-    "start": "concurrently \"cross-env BROWSER=none yarn start-react\" \"wait-on http://localhost:3000 && electron .\""
+    "build": "yarn build-react && yarn build-electron",
+    "start": "concurrently \"cross-env BROWSER=none yarn start-react\" \"wait-on http://localhost:3000 && electron .\"",
+    "mstart": "electron ./public/electron.js"
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -61,8 +61,9 @@ const Slide = () => {
                     if(page<slide.length){
                         setPage(page+1)
                     }else{
+
                         MStore.setFirst(false)
-                        history.goBack()
+                        history.push("/")
                     }
                 }}
 

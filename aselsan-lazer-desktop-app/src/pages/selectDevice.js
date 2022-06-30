@@ -7,15 +7,17 @@ import {IStore} from "../stores/InstantStore";
 import {error} from "../functions/toast";
 const {ipcRenderer} = require("electron");
 
-
 const SelectDevice = () => {
     const ble = IStore.ble
     const history = useHistory()
 
     const [devices,setDevices] = useState([])
+
     useEffect(()=>{
 
     },[])
+
+
 
 
     function scan() {
@@ -40,6 +42,8 @@ const SelectDevice = () => {
                 setDevices([...deviceList])
             }
         })
+
+
 
     }
 

@@ -11,12 +11,12 @@ import LaserMeter from "./laserMeter";
 import {IStore} from "../stores/InstantStore";
 import {observer} from "mobx-react-lite";
 import Setting from "./setting";
+import { ipcRenderer } from "electron";
 
 const Tabs = () => {
 
 
-    useEffect(()=>{
-    },[])
+
 
     const page = IStore.tab_index
 

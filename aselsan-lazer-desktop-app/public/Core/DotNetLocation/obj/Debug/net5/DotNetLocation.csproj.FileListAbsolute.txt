@@ -1,0 +1,5 @@
+C:\Users\cyberistanbul\Documents\GitHub\aselsanlazer\aselsan-lazer-desktop-app\DotNetLocation\obj\Debug\net5\DotNetLocation.csproj.AssemblyReference.cache
+C:\Users\cyberistanbul\Documents\GitHub\aselsanlazer\aselsan-lazer-desktop-app\DotNetLocation\obj\Debug\net5\DotNetLocation.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cyberistanbul\Documents\GitHub\aselsanlazer\aselsan-lazer-desktop-app\DotNetLocation\obj\Debug\net5\DotNetLocation.AssemblyInfoInputs.cache
+C:\Users\cyberistanbul\Documents\GitHub\aselsanlazer\aselsan-lazer-desktop-app\DotNetLocation\obj\Debug\net5\DotNetLocation.AssemblyInfo.cs
+C:\Users\cyberistanbul\Documents\GitHub\aselsanlazer\aselsan-lazer-desktop-app\DotNetLocation\obj\Debug\net5\DotNetLocation.csproj.CoreCompileInputs.cache

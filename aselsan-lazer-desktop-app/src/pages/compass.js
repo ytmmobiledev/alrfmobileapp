@@ -56,6 +56,8 @@ function Compass({ navigation }) {
         }
     },[])
 
+
+
     function _setData({distance,distance_unit,angle_unit,azimuth,elevation,roll}) {
         setDistance(distance)
         setDistanceUnit(distanceConversion(0,distance_unit,distance_unit).unit)

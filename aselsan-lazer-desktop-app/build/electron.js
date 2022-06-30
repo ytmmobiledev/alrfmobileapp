@@ -1,6 +1,7 @@
 const {ipcMain,app,BrowserWindow} = require("electron");
 const path = require("path");
 const url = require('url');
+const { ConnectionBuilder } = require("electron-cgi");
 
 const isDev = require("electron-is-dev");
 
@@ -13,6 +14,8 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         icon: __dirname+"/logo.png",
         fullscreen:true,
+        minHeight:1000,
+        minWidth:1000,
         title:"Aselsan",
         show:false,
         webPreferences:{
@@ -36,6 +39,8 @@ function createWindow() {
     mainWindow.webContents.on('select-bluetooth-device', (event, deviceList, callback) => {
         event.preventDefault()
         ble_callback = callback
+
+
         mainWindow.webContents.send('devices',deviceList);
 
     })
@@ -65,9 +70,7 @@ app.on('window-all-closed', function () {
 
 ipcMain.on("selected-device",((event,deviceId)=>{
     try {
-        console.warn(deviceId)
         if(ble_callback){
-            console.warn("selected ",deviceId)
             ble_callback(deviceId)
         }
     }catch (e) {
@@ -75,3 +78,29 @@ ipcMain.on("selected-device",((event,deviceId)=>{
     }
 }))
 
+ipcMain.on("get-location",((event)=>{
+   getLocation()
+}))
+
+
+async function getLocation() {
+    try {
+        let connection = new ConnectionBuilder()
+            .connectTo("dotnet", "run", "--project", isDev?"./public/Core/DotNetLocation":"DotNetLocation")
+            .build();
+
+        connection.onDisconnect = () => {console.warn("finish-location")};
+
+        const response = await connection.send("find-location","")
+        try {
+            mainWindow.webContents.send("find-location", response.toString().split("-"));
+        }catch (e) {
+
+        }
+
+
+        connection.close();
+    }catch{}
+
+
+}

@@ -17,3 +17,7 @@
 node_modules/
 /n
 n/
+/dist
+dist/
+/build
+build/
