@@ -12,9 +12,7 @@ app.commandLine.appendSwitch("enable-experimental-web-platform-features");
 function createWindow() {
   mainWindow = new BrowserWindow({
     icon: __dirname + "/logo.png",
-    /*fullscreen:true,
-        minHeight:1000,
-        minWidth:1000,*/
+    fullscreen:true,
     title: "Aselsan",
     show: false,
     webPreferences: {
@@ -37,7 +35,10 @@ function createWindow() {
       event.preventDefault();
       ble_callback = callback;
 
-      mainWindow.webContents.send("devices", deviceList);
+      mainWindow.webContents.send(
+        "devices",
+        deviceList.filter((e) => e.deviceName.includes("ALRF"))
+      );
     }
   );
 
