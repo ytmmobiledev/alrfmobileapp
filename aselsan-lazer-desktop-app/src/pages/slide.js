@@ -67,7 +67,7 @@ const Slide = () => {
                     }
                 }}
 
-                className="flex center" style={{marginTop:"3vh", padding:"1vh 7vh",borderRadius:15,backgroundColor:Colors.primary}}>
+                className="flex center btn" style={{marginTop:"3vh", padding:"1vh 7vh",borderRadius:15,backgroundColor:Colors.primary}}>
                 <div style={{textAlign:'center',fontWeight:'500',fontSize:"2vh",color:Colors.white}}>{string["devamet"]}</div>
             </div>
         </div>
