@@ -1,7 +1,7 @@
 //@ts-nocheck
 import { configure, makeAutoObservable } from "mobx";
 import BLEService from "../services/BLEService";
-import {setModalTypes} from "../components/SetModal";
+import { setModalTypes } from "../components/SetModal";
 
 configure({ enforceActions: "never" });
 
@@ -14,10 +14,29 @@ class InstantStoreC {
   loading: boolean = false;
   desc_modal: any = {};
   custom_modal: any = {};
-  set_modal: {visible:boolean,title?:string,description?:string,icon?:any,value?:any,options?:any,type:keyof typeof setModalTypes,numberParams:any,onChange:any} = {};
+  set_modal: {
+    visible: boolean;
+    title?: string;
+    description?: string;
+    icon?: any;
+    value?: any;
+    options?: any;
+    type: keyof typeof setModalTypes;
+    numberParams: any;
+    onChange: any;
+  } = {};
   go_page: any = {};
   logger: any = [];
 
+  isEncryptedCommunication: boolean = false;
+
+  loadingConnect: number = -1;
+
+  decl: number | null = null;
+
+  controlData: Uint8Array;
+
+  navigation: any = null;
 
   setBLE(data: BLEService) {
     this.ble = data;
@@ -38,9 +57,8 @@ class InstantStoreC {
     this.go_page = data;
   }
   setLogger(data: any) {
-    this.logger = [...this.logger,data];
+    this.logger = [...this.logger, data];
   }
-
 }
 
 export const IStore = new InstantStoreC();
