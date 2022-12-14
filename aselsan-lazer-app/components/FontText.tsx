@@ -15,6 +15,8 @@ interface PropsType {
   color?: ColorProps;
   colorHex?: string;
   numberOfLines?: number;
+
+  lineHeight?: number;
   position?: "left" | "right" | "center";
   style?:
     | StyleProp<ViewStyle>
@@ -58,6 +60,7 @@ export function FontText(props: PropsType) {
           ...(props.position ? { textAlign: props.position } : {}),
           ...(props.underline ? { textDecorationLine: "underline" } : {}),
           ...(props.flex ? { flex: props.flex } : {}),
+          ...(props.lineHeight ? { lineHeight: props.lineHeight } : {}),
         },
       ]}
     >

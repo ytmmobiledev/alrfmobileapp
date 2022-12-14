@@ -63,7 +63,7 @@ function LaserMeter({ navigation }: any) {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        alert("Konum Eişimine İzin Vermelisiniz");
+        alert(string["konumizni"]);
         return;
       }
 
@@ -199,7 +199,7 @@ function LaserMeter({ navigation }: any) {
     info("Atış Yapılıyor...");
     setLoading(true);
     await getLocation();
-    await ble.sendDataToDevice(
+    ble.sendDataToDevice(
       "distance_and_compass",
       param.distance_and_compass.getHex
     );
@@ -782,7 +782,7 @@ function LaserMeter({ navigation }: any) {
                                       string["yukariya"]
                                     : ConvertDDToDMS(target.longitude) + " E";
 
-                                Clipboard.setString(txt);
+                                Clipboard.setStringAsync(txt);
 
                                 /*Share.share({
                                 message: txt,

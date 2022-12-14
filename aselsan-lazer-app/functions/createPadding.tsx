@@ -3,6 +3,9 @@ import { toParse } from "./json";
 
 export function createPaddingStyle(padding: any) {
   const paddingStyle: any = {};
+
+  if (!padding) return paddingStyle;
+
   try {
     let new_padding: any = padding.trim().split(" ");
 

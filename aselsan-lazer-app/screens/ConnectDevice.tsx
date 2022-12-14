@@ -16,6 +16,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { Params } from "../constants/Params";
 import { Observer } from "mobx-react-lite";
 import { uniqBy } from "lodash";
+import { string } from "../locales";
 
 let _devices = [];
 
@@ -39,7 +40,7 @@ function ConnectDevice({ navigation }: any) {
   async function locationPermission() {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
-      alert("Konum Eişimine İzin Vermelisiniz");
+      alert(string["konumizni"]);
       return;
     }
 
@@ -74,7 +75,10 @@ function ConnectDevice({ navigation }: any) {
           } else if (e.errorCode == "600") {
             return;
           } else {
-            error(e.message);
+            error(
+              string["baglantihatasi"],
+              string["baglantibasarisizaciklama"]
+            );
           }
 
           stopScan();
@@ -82,14 +86,7 @@ function ConnectDevice({ navigation }: any) {
           if (!scannedDevice.name || !scannedDevice.name.includes("ALRF"))
             return null;
 
-          /* for (const { id } of _devices) {
-            if (id == scannedDevice.id) return;
-          }*/
-
           setDevices((prev) => uniqBy([...prev, scannedDevice], "id"));
-
-          /*_devices.push(scannedDevice);
-          setDevices([..._devices]);*/
         }
       }
     );
@@ -109,26 +106,11 @@ function ConnectDevice({ navigation }: any) {
         ble.setDeviceID(device.id);
         ble.startListener();
 
-        await ble.sendDataToDevice(
-          "kimlik_dogrulama",
-          param.kimlikdogrulama.getHex
-        );
-
-        /*IStore.setLogger({
-          type: "device",
-          key: "",
-          data: device.id + " " + device.name,
-          date: l_moment(),
-          res: "device connected",
-        });
-
-        success();*/
-        // navigation.pop();
+        ble.sendDataToDevice("kimlik_dogrulama", param.kimlikdogrulama.getHex);
       })
       .catch((e) => {
         IStore.loadingConnect = -1;
-        console.log("Error", e);
-        error(e.message);
+        error(string["baglantibasarisiz"], string["baglantibasarisizaciklama"]);
       });
   }
 

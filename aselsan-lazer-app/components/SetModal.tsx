@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import MaskInput, { createNumberMask } from "react-native-mask-input";
 import { error } from "../functions/toast";
 import { l_moment } from "../functions/cMoment";
+import { string } from "../locales";
 
 export const setModalTypes = {
   Select: "select",
@@ -174,7 +175,7 @@ function SetModal() {
                             isNaN(value) ||
                             !/^-?\d+$/.test(value.toString())
                           ) {
-                            error("Geçersiz Veri");
+                            error(string["gecersizveri"]);
                             return;
                           }
                           if (min != undefined && value < min) {

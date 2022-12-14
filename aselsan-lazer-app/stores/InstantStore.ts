@@ -2,6 +2,7 @@
 import { configure, makeAutoObservable } from "mobx";
 import BLEService from "../services/BLEService";
 import { setModalTypes } from "../components/SetModal";
+import QueueService from "../services/QueueService";
 
 configure({ enforceActions: "never" });
 
@@ -10,6 +11,7 @@ class InstantStoreC {
     makeAutoObservable(this);
   }
 
+  queueService = new QueueService();
   ble: BLEService = new BLEService();
   loading: boolean = false;
   desc_modal: any = {};
@@ -33,6 +35,8 @@ class InstantStoreC {
   loadingConnect: number = -1;
 
   decl: number | null = null;
+
+  firstDeclToast: boolean = true;
 
   controlData: Uint8Array;
 

@@ -104,8 +104,8 @@ function Compass({ navigation }: any) {
   }
 
   async function getData() {
-    if (!_auto) info("Atış Yapılıyor...");
-    await ble.sendDataToDevice(
+    if (!_auto) info(string["atisyapiliyor"]);
+    ble.sendDataToDevice(
       "distance_and_compass",
       param.distance_and_compass.getHex
     );

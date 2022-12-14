@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Aselsan",
-    "slug": "Aselsan",
+    "name": "CETVEL Mobil Uygulama",
+    "slug": "cetvelaselsanalrf",
     "owner": "cyberistanbul",
-    "version": "1.0.2",
+    "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
-    "scheme": "aselsanlazer",
+    "scheme": "cetvelaselsanalrf",
     "userInterfaceStyle": "dark",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -28,7 +28,8 @@
       ]
     ],
     "ios": {
-      "buildNumber": "1.0.2",
+      "bundleIdentifier": "com.cyberistanbul.aselsanlazer",
+      "buildNumber": "1.0.0",
       "supportsTablet": false,
       "usesIcloudStorage": true,
       "infoPlist": {
@@ -38,20 +39,26 @@
         "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos.",
         "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos."
       },
-      "bundleIdentifier": "com.cyberistanbul.aselsanlazer"
+      "config": {
+        "googleMapsApiKey": "AIzaSyAIvFvnL89MPxljyPdpeZWodmaxi5jv38w"
+      },
+      "googleServicesFile": "./services/GoogleService-Info.plist"
     },
     "android": {
-      "versionCode": 3,
-      "googleServicesFile": "./google-services.json",
+      "versionCode": 1,
+      "googleServicesFile": "./services/google-services.json",
       "package": "com.cyberistanbul.aselsanlazer",
       "permissions": [
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
-        "RECEIVE_BOOT_COMPLETED"
+        "RECEIVE_BOOT_COMPLETED",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
       ],
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyDURfe9PIYdyGyPEzDbBkqLLJhKd7oAWMw"
+          "apiKey": "AIzaSyDeKivaJGe5SN2W0AWwydTUyKI6cXMfhJ0"
         }
       },
       "useNextNotificationsApi": true
@@ -61,7 +68,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "ad80e6c8-da0a-4245-b683-b67dacfeebd8"
+        "projectId": "7d3ae049-a293-425a-a54d-ef79f7480651"
       }
     }
   }

@@ -22,7 +22,6 @@ import {
 import { MainStore } from "../../stores/MainStore";
 import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake";
 import Accordion from "react-native-collapsible/Accordion";
-import { ScrollView } from "react-native";
 
 const HomeScreenType = observer(() => {
   const { home_screen_type } = MainStore.settings;
@@ -213,7 +212,7 @@ const Manuel = () => {
   );
 };
 
-const Contact = () => {
+export const Contact = () => {
   return (
     <CView>
       <FontText
@@ -234,9 +233,25 @@ const Contact = () => {
               }}
             >
               <FontText padding="1" title={""} size={1.7}>
-                <FontText title={title} size={1.7} color="white" />
-                <FontText title={": "} size={1.7} color="white" />
-                <FontText title={value} size={1.7} color="white" />
+                <FontText
+                  title={title}
+                  size={2}
+                  color="lightPrimary"
+                  bold
+                  lineHeight={30}
+                />
+                <FontText
+                  title={" :  "}
+                  size={1.7}
+                  color="white"
+                  lineHeight={30}
+                />
+                <FontText
+                  title={value}
+                  size={1.7}
+                  color="white"
+                  lineHeight={30}
+                />
               </FontText>
             </CView>
           )

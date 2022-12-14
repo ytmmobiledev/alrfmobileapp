@@ -7,7 +7,7 @@ import { hp } from "../../functions/responsiveScreen";
 import { Container, Content } from "native-base";
 import Colors from "../../constants/Colors";
 import { observer } from "mobx-react-lite";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { IStore } from "../../stores/InstantStore";
 import { Params } from "../../constants/Params";
 import { ActivityIndicator, Alert, DeviceEventEmitter } from "react-native";
@@ -17,7 +17,6 @@ import { string } from "../../locales";
 import { MainStore } from "../../stores/MainStore";
 import { setModalTypes } from "../../components/SetModal";
 import * as Location from "expo-location";
-import { angleDiffToast } from "../../functions/findData";
 
 //@ts-ignore
 const geomagnetism = require("geomagnetism");
@@ -46,21 +45,28 @@ function Settings({ navigation }: any) {
   const [data, setData] = useState(ble.getData());
   const [device_id, setDeviceID] = useState("loading");
   const [location, setLocation]: any = useState(null);
-  const [decl, setDecl] = useState(null);
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        alert("Konum Eişimine İzin Vermelisiniz");
-        return;
-      }
+  function magneticAngle(coords) {
+    const info = geomagnetism
+      .model()
+      .point([coords.latitude, coords.longitude]);
 
-      await getLocation();
-    })();
-  }, []);
-
+    if (info?.decl) {
+      IStore.decl = Number(parseFloat(info!.decl).toFixed(1));
+      ble.sendDataToDevice(
+        params.magnetic_declination_angle.title,
+        params.magnetic_declination_angle.getHex
+      );
+    }
+  }
   async function getLocation() {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+
+    if (status !== "granted") {
+      alert(string["konumizni"]);
+      return {};
+    }
+
     const { coords } = await Location.getCurrentPositionAsync({
       accuracy: Location.Accuracy.Highest,
       timeInterval: 10000,
@@ -71,24 +77,11 @@ function Settings({ navigation }: any) {
       latitudeDelta: 0.0922,
       longitudeDelta: 0.0421,
     };
+
     setLocation(_location);
+
+    return coords;
   }
-
-  useEffect(() => {
-    if (location?.latitude && location?.longitude) {
-      const info = geomagnetism
-        .model()
-        .point([location.latitude, location.longitude]);
-
-      if (info?.decl) {
-        IStore.decl = +parseFloat(info!.decl).toFixed(1);
-        ble.sendDataToDevice(
-          params.magnetic_declination_angle.title,
-          params.magnetic_declination_angle.getHex
-        );
-      }
-    }
-  }, [location]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -99,6 +92,9 @@ function Settings({ navigation }: any) {
         }
       );
       controlDevice();
+      getLocation().then((res) => {
+        magneticAngle(res);
+      });
       return () => {
         listener.remove();
       };
@@ -119,10 +115,14 @@ function Settings({ navigation }: any) {
   async function getValues() {
     for (let [key, param] of Object.entries(usage_params)) {
       if (param.getHex) {
-        // await delay(200);
-        await ble.sendDataToDevice(key, param.getHex);
+        await delay(50);
+        ble.sendDataToDevice(key, param.getHex);
       }
     }
+  }
+
+  function reload() {
+    controlDevice();
   }
 
   if (!device_id) {
@@ -159,6 +159,19 @@ function Settings({ navigation }: any) {
             horizontal="space-between"
           >
             <FontText title={"ayarlar"} size={2.2} bold color="primary" />
+
+            <CView
+              padding="1"
+              onPress={() => {
+                reload();
+              }}
+            >
+              <MaterialCommunityIcons
+                name="reload"
+                size={hp(3)}
+                color={Colors.white}
+              />
+            </CView>
           </CView>
           <CView padding="0.5" width="90%" radius={10}>
             {Object.entries(usage_params).map(
@@ -209,10 +222,7 @@ function Settings({ navigation }: any) {
                                   {
                                     text: string["evet"],
                                     onPress: async () => {
-                                      await ble.sendDataToDevice(
-                                        key,
-                                        setHex(id)
-                                      );
+                                      ble.sendDataToDevice(key, setHex(id));
                                     },
                                   },
                                 ],
@@ -220,7 +230,7 @@ function Settings({ navigation }: any) {
                                   cancelable: true,
                                 }
                               );
-                            } else await ble.sendDataToDevice(key, setHex(id));
+                            } else ble.sendDataToDevice(key, setHex(id));
                             return true;
                           },
                         });

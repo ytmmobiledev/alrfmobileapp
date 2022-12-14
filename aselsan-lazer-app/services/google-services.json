@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "521155035307",
+    "project_id": "cetvel",
+    "storage_bucket": "cetvel.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:521155035307:android:f550ceac656e71d2d137ee",
+        "android_client_info": {
+          "package_name": "com.cyberistanbul.aselsanlazer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "521155035307-nhp1lv1u1mi6hltkmskf2fep4q14elh5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeKivaJGe5SN2W0AWwydTUyKI6cXMfhJ0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "521155035307-nhp1lv1u1mi6hltkmskf2fep4q14elh5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "521155035307-arq4d5ipqemmek4dpgh6i7krddqo8vjq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cyberistanbul.aselsanlazer"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

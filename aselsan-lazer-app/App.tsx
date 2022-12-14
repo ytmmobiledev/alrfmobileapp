@@ -18,7 +18,6 @@ import { IStore } from "./stores/InstantStore";
 import CToast from "./components/CToast";
 import Colors from "./constants/Colors";
 import SetModal from "./components/SetModal";
-import Logger from "./components/Logger";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -27,7 +26,6 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
-
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();

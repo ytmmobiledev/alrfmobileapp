@@ -104,7 +104,7 @@ function Device({ navigation }: any) {
 
   async function getValues() {
     for (let [key, param] of Object.entries(usage_params)) {
-      if (param.getHex) await ble.sendDataToDevice(key, param.getHex);
+      if (param.getHex) ble.sendDataToDevice(key, param.getHex);
     }
   }
 

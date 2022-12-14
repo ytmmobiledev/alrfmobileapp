@@ -22,7 +22,7 @@ import { CImage } from "../components/CImage";
 import Measure from "../screens/Home/Measure";
 import Settings from "../screens/Home/Settings";
 import LaserMeter from "../screens/Home/LaserMeter";
-import MoreInfo from "../screens/Home/MoreInfo";
+import MoreInfo, { Contact } from "../screens/Home/MoreInfo";
 import { BottomFabBar } from "rn-wave-bottom-bar";
 import { string } from "../locales";
 import Device from "../screens/Home/Device";
@@ -262,7 +262,11 @@ function headerLeft(navigation: any) {
     <CView center>
       <FontText
         onPress={() => {
-          alert("Yardım");
+          IStore.setCustomModal({
+            visible: true,
+            icon: require("../assets/images/modal/iletisim.png"),
+            children: () => <Contact />,
+          });
         }}
         underline
         position="center"

@@ -1,4 +1,4 @@
-import { PROCESS_KEYS } from "../constants/Params";
+import { Params, PROCESS_KEYS } from "../constants/Params";
 import { Base64ToHex } from "./Buffer";
 import {
   AngleUnitTypes,
@@ -20,6 +20,69 @@ import {
 import { IStore } from "../stores/InstantStore";
 import { Alert } from "react-native";
 import { string } from "../locales";
+
+const params = Params();
+
+function angleDiffToast(angle: string) {
+  const { fixed } = params.magnetic_declination_angle.numberParams;
+
+  const value1 = angle.substr(0, angle.length - fixed);
+  const value2 = angle.substr(fixed * -1);
+
+  let numberAngle;
+
+  if (value2 && !value1) {
+    numberAngle = Number("0." + value2);
+  } else {
+    numberAngle = Number(value1 + "." + value2);
+  }
+
+  if (IStore.decl !== null && IStore.firstDeclToast) {
+    IStore.firstDeclToast = false;
+    const diff = Math.abs(numberAngle - IStore.decl);
+
+    if (diff >= 0.5) {
+      Alert.alert(
+        string["uyari"],
+        string["manyetiksapmauyari"],
+        [
+          {
+            text: string["hayir"],
+            style: "cancel",
+          },
+          {
+            text: string["evet"],
+            onPress: () => {
+              const _angle = IStore.decl!.toString();
+
+              const value1 = _angle.split(".")[0];
+              const value2 = _angle.split(".")[1];
+
+              const _value: any = [
+                value1 || 0,
+                value2 ? Number(value2).toFixed(1) : 0,
+              ];
+
+              const value = parseInt(
+                parseInt(_value[0] ? _value[0] : "0") +
+                  "" +
+                  (fixed ? parseInt(_value[1] ? _value[1] : 0) : "")
+              );
+
+              IStore.ble.sendDataToDevice(
+                params.magnetic_declination_angle.title,
+                params.magnetic_declination_angle.setHex(value)
+              );
+            },
+          },
+        ],
+        {
+          cancelable: true,
+        }
+      );
+    }
+  }
+}
 
 export function findData(value: any) {
   try {
@@ -202,35 +265,6 @@ function findTopDoorLock(value: any) {
   return ((value[2] << 8) | value[3]).toString();
 }
 
-export function angleDiffToast(angle: number) {
-  if (IStore.decl !== null) {
-    const diff = Math.abs(angle - IStore.decl);
-
-    if (diff >= 0.5) {
-      /*Alert.alert(
-        "Manyetik Sapma Açısı",
-        "Bulunduğunuz konumun manyetik sapma açısı cihaz içindekinden farklıdır. Manyetik sapma açısını güncellemek ister misiniz?",
-        [
-          {
-            text: string["hayir"],
-            style: "cancel",
-          },
-          {
-            text: string["evet"],
-            onPress: () => {
-              console.log("OK Pressed");
-              console.log(IStore.decl, angle);
-            },
-          },
-        ],
-        {
-          cancelable: true,
-        }
-      );*/
-    }
-  }
-}
-
 function findMagneticDeclinationAngle(value: any) {
   let data = (value[2] << 8) | value[3];
 
@@ -238,16 +272,8 @@ function findMagneticDeclinationAngle(value: any) {
     data = data - 0x10000;
   }
 
-  const val = data.toString();
+  angleDiffToast(data.toString());
 
-  const val1 = +val.substr(0, val.length - 1);
-  const val2 = parseInt(val.substr(-1)) / 10;
-
-  const angle = val1 + val2;
-
-  angleDiffToast(angle);
-
-  console.log("Magnetic Declination Angle", data, typeof data, data.toString());
   return data.toString();
 }
 

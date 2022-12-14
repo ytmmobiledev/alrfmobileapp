@@ -7,8 +7,8 @@ import { AntDesign, Entypo } from "@expo/vector-icons";
 
 import { observer } from "mobx-react-lite";
 import { IStore } from "../stores/InstantStore";
-import {CImage} from "./CImage";
-import {CView} from "./CView";
+import { CImage } from "./CImage";
+import { CView } from "./CView";
 
 function CustomModal() {
   const {
@@ -101,18 +101,27 @@ function CustomModal() {
             borderRadius: 10,
           }}
         >
-            {
-                icon?
-                    <View
-                        style={{ alignSelf: "flex-end"}}
-                    >
-                        <CImage imageStyle={{borderTopRightRadius:10}} source={require("../assets/images/modal/corner.png")} width={8} height={7} background>
-                            <CView style={{marginLeft:hp(2),marginBottom:hp(1)}} center flex={1}>
-                                <CImage source={icon} height={3} width={3} />
-                            </CView>
-                        </CImage>
-                    </View>:<View style={{height:hp(3)}}/>
-            }
+          {icon ? (
+            <View style={{ alignSelf: "flex-end" }}>
+              <CImage
+                imageStyle={{ borderTopRightRadius: 10 }}
+                source={require("../assets/images/modal/corner.png")}
+                width={8}
+                height={7}
+                background
+              >
+                <CView
+                  style={{ marginLeft: hp(2), marginBottom: hp(1) }}
+                  center
+                  flex={1}
+                >
+                  <CImage source={icon} height={3} width={3} />
+                </CView>
+              </CImage>
+            </View>
+          ) : (
+            <View style={{ height: hp(3) }} />
+          )}
           <View style={{ padding: hp(3), paddingTop: 0 }}>
             {children ? children() : null}
           </View>

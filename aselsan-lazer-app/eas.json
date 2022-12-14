@@ -4,7 +4,8 @@
   },
   "build": {
     "dev": {
-      "developmentClient": true
+      "developmentClient": true,
+      "distribution": "internal"
     },
     "preview": {
       "distribution": "internal"

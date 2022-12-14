@@ -3,6 +3,9 @@ import { toParse } from "./json";
 
 export function createMarginStyle(margin: any) {
   const marginStyle: any = {};
+
+  if (!margin) return marginStyle;
+
   try {
     let new_margin: any = margin.trim().split(" ");
 
