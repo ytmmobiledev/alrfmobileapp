@@ -2,9 +2,9 @@ import { AngleUnitTypes, DistanceUnitTypes } from "../constants/Config";
 import { BleManager } from "react-native-ble-plx";
 import { Base64ToHex } from "../functions/Buffer";
 import { IStore } from "../stores/InstantStore";
-import { createIV, encrypt, Params } from "../constants/Params";
 import { flattenDeep } from "lodash";
 import ExpoJobQueue from "expo-job-queue";
+import { createIV, encrypt } from "../functions/AES";
 
 const transactionId = "monitor_device";
 

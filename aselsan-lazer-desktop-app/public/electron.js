@@ -12,8 +12,8 @@ app.commandLine.appendSwitch("enable-experimental-web-platform-features");
 function createWindow() {
   mainWindow = new BrowserWindow({
     icon: __dirname + "/logo.png",
-    fullscreen:true,
-    title: "Aselsan",
+    fullscreen: true,
+    title: "CETVEL Mobil Uygulama",
     show: false,
     webPreferences: {
       nodeIntegration: true,
@@ -35,10 +35,7 @@ function createWindow() {
       event.preventDefault();
       ble_callback = callback;
 
-      mainWindow.webContents.send(
-        "devices",
-        deviceList.filter((e) => e.deviceName.includes("ALRF"))
-      );
+      mainWindow.webContents.send("devices", deviceList);
     }
   );
 

@@ -9,6 +9,12 @@ import { ReloadOutlined, RightOutlined } from "@ant-design/icons";
 import { observer } from "mobx-react-lite";
 import BLEService from "../services/BLEService";
 import { useHistory } from "react-router-dom";
+import { confirmAlert } from "react-confirm-alert";
+import { MStore } from "../stores/MainStore";
+import { setModalTypes } from "../componenets/SetModal";
+import { osName, OsTypes } from "react-device-detect";
+import { ipcRenderer } from "electron";
+const geomagnetism = require("geomagnetism");
 
 const Setting = () => {
   const history = useHistory();
@@ -34,13 +40,47 @@ const Setting = () => {
     BLEService.event.on("monitor", _setData);
     controlDevice();
 
+    switch (osName) {
+      case OsTypes.Windows:
+      case OsTypes.WindowsPhone:
+        try {
+          ipcRenderer.send("get-location", null);
+          ipcRenderer.on("find-location", getLocation);
+        } catch (e) {}
+        break;
+      default:
+        break;
+    }
+
     return () => {
       BLEService.event.removeListener("monitor", _setData);
+      ipcRenderer.removeListener("find-location", getLocation);
     };
   }, []);
 
   function _setData({ all_data }) {
     setData({ ...all_data });
+  }
+
+  function getLocation(e, res) {
+    magneticAngle({
+      latitude: parseFloat(res[0].replace(",", ".")),
+      longitude: parseFloat(res[1].replace(",", ".")),
+    });
+  }
+
+  function magneticAngle(coords) {
+    const info = geomagnetism
+      .model()
+      .point([coords.latitude, coords.longitude]);
+
+    if (info["decl"]) {
+      IStore.decl = Number(parseFloat(info.decl).toFixed(1));
+      ble.sendDataToDevice(
+        params.magnetic_declination_angle.title,
+        params.magnetic_declination_angle.getHex
+      );
+    }
   }
 
   function reload() {
@@ -74,7 +114,7 @@ const Setting = () => {
 
   function getValues() {
     for (let [key, param] of Object.entries(usage_params)) {
-      if (param.getHex) ble.sendDataToDevice(key, param.getHex).then(() => {});
+      if (param.getHex) ble.sendDataToDevice(key, param.getHex);
     }
   }
 
@@ -182,7 +222,25 @@ const Setting = () => {
                         numberParams,
                         options: options ? Object.values(options) : null,
                         onChange: async (id) => {
-                          await ble.sendDataToDevice(key, setHex(id));
+                          if (key === "night_vision_mode" && id === 1) {
+                            confirmAlert({
+                              title: string["uyari"],
+                              message: string["ekranparlakligi"],
+                              buttons: [
+                                {
+                                  label: string["hayir"],
+                                  onClick: () => {},
+                                },
+                                {
+                                  label: string["evet"],
+                                  onClick: () => {
+                                    ble.sendDataToDevice(key, setHex(id));
+                                  },
+                                },
+                              ],
+                            });
+                          } else ble.sendDataToDevice(key, setHex(id));
+
                           return true;
                         },
                       });
@@ -241,6 +299,67 @@ const Setting = () => {
               );
             }
           )}
+          <div
+            className="flex row btn"
+            style={{
+              zIndex: 999,
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: 12,
+              margin: "15px 0px",
+              borderRadius: 15,
+              backgroundColor: Colors.secondary,
+            }}
+            onClick={() => {
+              IStore.setSetModal({
+                visible: true,
+                title: string["hedefkonumgosterimformati"],
+                value: MStore.hedefkonumgosterimtipi,
+                type: setModalTypes.Select,
+                options: [
+                  {
+                    id: "utm",
+                    value: string["utm"],
+                  },
+                  {
+                    id: "latlong",
+                    value: string["latlong"],
+                  },
+                ],
+                onChange: async (id) => {
+                  MStore.hedefkonumgosterimtipi = id;
+                  return true;
+                },
+              });
+            }}
+          >
+            <div
+              style={{
+                fontSize: 18,
+                fontWeight: "bold",
+                color: Colors.text,
+              }}
+            >
+              {string["hedefkonumgosterimformati"]}
+            </div>
+            <div className="flex row center">
+              <div
+                style={{
+                  display: "flex",
+                  flex: 2,
+                  textAlign: "left",
+                  color: Colors.text,
+                  padding: 10,
+                  fontSize: 16,
+                  fontWeight: "bold",
+                }}
+              >
+                {string[MStore.hedefkonumgosterimtipi]}
+              </div>
+
+              <RightOutlined style={{ fontSize: 20, color: Colors.text }} />
+            </div>
+          </div>
           <div style={{ height: 100 }} />
         </div>
       </div>

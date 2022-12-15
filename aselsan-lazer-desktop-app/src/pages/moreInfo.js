@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import Header, { HelpText, MoreInfoButton } from "../componenets/Header";
+import Header, { MoreInfoButton } from "../componenets/Header";
 import { string } from "../locales";
 import Colors from "../constants/Colors";
 import { RightOutlined } from "@ant-design/icons";
@@ -13,6 +13,111 @@ import { IStore } from "../stores/InstantStore";
 import { setModalTypes } from "../componenets/SetModal";
 import useStayAwake from "use-stay-awake";
 
+export function Contact({ onClose = () => {} }) {
+  return (
+    <div style={{ width: "100%" }}>
+      <div
+        style={{
+          width: "100%",
+          display: "flex",
+          justifyContent: "flex-end",
+        }}
+      >
+        <div
+          className="background-img"
+          style={{
+            display: "flex",
+            width: 60,
+            height: 55,
+            backgroundImage: `url(${
+              require("../assets/images/modal/corner.png").default
+            })`,
+          }}
+        >
+          <div
+            style={{ marginLeft: 20, marginBottom: 10 }}
+            className="flex-1 center"
+          >
+            <img
+              src={require("../assets/images/modal/iletisim.png").default}
+              height={25}
+              width={25}
+            />
+          </div>
+        </div>
+      </div>
+      <div style={{ padding: 15 }}>
+        <div
+          style={{
+            fontSize: 18,
+            fontWeight: "bold",
+            color: Colors.primary,
+            textAlign: "center",
+          }}
+        >
+          {string["bizeulasin"]}
+        </div>
+      </div>
+      <div
+        className="flex center row"
+        style={{ display: "grid", width: "100%", padding: 10 }}
+      >
+        {Object.values(contacts).map(({ title, value, onPress }, index) => (
+          <div
+            key={index}
+            style={{ cursor: "pointer", display: "flex" }}
+            onClick={() => {
+              onPress(value.replace(/ /g, ""));
+            }}
+          >
+            <div style={{ padding: 10 }}>
+              <div
+                style={{
+                  color: Colors.white,
+                  fontSize: 16,
+                }}
+              >
+                <b style={{ color: Colors.lightPrimary, fontSize: 19 }}>
+                  {string[title]}
+                </b>
+                <span>{" : " + value}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div
+        className={"flex row"}
+        style={{
+          padding: 15,
+          width: "100%",
+          margin: "40px 0",
+          alignItems: "center",
+          justifyContent: "space-around",
+        }}
+      >
+        <div className="flex-1 center">
+          <div
+            className="btn"
+            style={{
+              fontSize: 18,
+              color: Colors.primary,
+              fontWeight: "bold",
+              padding: 10,
+            }}
+            onClick={() => {
+              onClose();
+            }}
+          >
+            {string.kapat}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const MoreInfo = () => {
   const history = useHistory();
   const device = useStayAwake();
@@ -21,7 +126,7 @@ const MoreInfo = () => {
 
   const { home_screen_type, lock_screen } = MStore.settings;
 
-  function Contact() {
+  function ContactModal() {
     return (
       <Modal
         bodyStyle={{ padding: 0, backgroundColor: Colors.darkGray }}
@@ -38,110 +143,14 @@ const MoreInfo = () => {
         }}
         footer={null}
       >
-        <div style={{ width: "100%" }}>
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              justifyContent: "flex-end",
-            }}
-          >
-            <div
-              className="background-img"
-              style={{
-                display: "flex",
-                width: 60,
-                height: 55,
-                backgroundImage: `url(${
-                  require("../assets/images/modal/corner.png").default
-                })`,
-              }}
-            >
-              <div
-                style={{ marginLeft: 20, marginBottom: 10 }}
-                className="flex-1 center"
-              >
-                <img
-                  src={require("../assets/images/modal/iletisim.png").default}
-                  height={25}
-                  width={25}
-                />
-              </div>
-            </div>
-          </div>
-          <div style={{ padding: 15 }}>
-            <div
-              style={{
-                fontSize: 18,
-                fontWeight: "bold",
-                color: Colors.primary,
-                textAlign: "center",
-              }}
-            >
-              {string["bizeulasin"]}
-            </div>
-          </div>
-          <div
-            className="flex center row"
-            style={{ display: "grid", width: "100%", padding: 10 }}
-          >
-            {Object.values(contacts).map(({ title, value, onPress }, index) => (
-              <div
-                key={index}
-                style={{ cursor: "pointer", display: "flex" }}
-                onClick={() => {
-                  onPress(value.replace(/ /g, ""));
-                }}
-              >
-                <div style={{ padding: 10 }}>
-                  <div
-                    style={{
-                      fontSize: 18,
-                      fontWeight: "bold",
-                      color: Colors.white,
-                    }}
-                  >
-                    {string[title] + ": " + value}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div
-            className={"flex row"}
-            style={{
-              padding: 15,
-              width: "100%",
-              margin: "40px 0",
-              alignItems: "center",
-              justifyContent: "space-around",
-            }}
-          >
-            <div className="flex-1 center">
-              <div
-                style={{
-                  fontSize: 18,
-                  color: Colors.primary,
-                  fontWeight: "bold",
-                  padding: 10,
-                }}
-                onClick={() => {
-                  setVisible(false);
-                }}
-              >
-                {string.kapat}
-              </div>
-            </div>
-          </div>
-        </div>
+        <Contact onClose={() => setVisible(false)} />
       </Modal>
     );
   }
 
   return (
     <div className="flex-1 column contain center">
-      <Contact />
+      <ContactModal />
       <div className="center" style={{ width: "100%" }}>
         <Header
           onBack={() => {

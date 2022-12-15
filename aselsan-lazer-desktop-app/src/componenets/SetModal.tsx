@@ -172,10 +172,10 @@ function SetModal() {
                   let { fixed, min, max, unit = "" } = numberParams;
 
                   value = parseInt(value.toString());
-                  console.warn(value, max);
+                  // console.warn(value, max);
 
                   if (isNaN(value) || !/^-?\d+$/.test(value.toString())) {
-                    error("Geçersiz Veri");
+                    error(string["gecersizveri"]);
                     return;
                   }
                   if (min != undefined && value < min) {

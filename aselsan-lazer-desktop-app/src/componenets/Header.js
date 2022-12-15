@@ -1,26 +1,56 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Colors from "../constants/Colors";
 import { string } from "../locales";
 import { LeftOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router-dom";
+import { IStore } from "../stores/InstantStore";
+import { Contact } from "../pages/moreInfo";
+import { Modal } from "antd";
 
 export function HelpText() {
+  const [visible, setVisible] = useState(false);
+
+  function ContactModal() {
+    return (
+      <Modal
+        bodyStyle={{ padding: 0, backgroundColor: Colors.darkGray }}
+        centered
+        closable={false}
+        visible={visible}
+        okText={string.kaydet}
+        cancelText={string.kapat}
+        onOk={() => {
+          setVisible(false);
+        }}
+        onCancel={() => {
+          setVisible(false);
+        }}
+        footer={null}
+      >
+        <Contact onClose={() => setVisible(false)} />
+      </Modal>
+    );
+  }
+
   return (
-    <div
+    <>
+      <ContactModal />
+      <div
         className="btn"
-      onClick={() => {
-        alert("yardım");
-      }}
-      style={{
-        cursor: "pointer",
-        padding: 20,
-        textDecorationLine: "underline",
-        fontWeigh: "bold",
-        fontSize: 14,
-      }}
-    >
-      {string.yardimaihtiyacinvarmi}
-    </div>
+        onClick={() => {
+          setVisible(true);
+        }}
+        style={{
+          cursor: "pointer",
+          padding: 20,
+          textDecorationLine: "underline",
+          fontWeigh: "bold",
+          fontSize: 14,
+        }}
+      >
+        {string.yardimaihtiyacinvarmi}
+      </div>
+    </>
   );
 }
 
@@ -72,7 +102,7 @@ function Header({
     >
       <div className="flex-1 left">
         {onBack ? (
-          <div className="btn" onClick={onBack} style={{ padding: 20}}>
+          <div className="btn" onClick={onBack} style={{ padding: 20 }}>
             <LeftOutlined style={{ fontSize: 25, color: Colors.text }} />
           </div>
         ) : null}

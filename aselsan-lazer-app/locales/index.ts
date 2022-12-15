@@ -2,7 +2,6 @@ import { tr } from "./tr";
 import { en } from "./en";
 import moment from "moment";
 import "moment/locale/tr";
-import { MainStore } from "../stores/MainStore";
 import * as Localization from "expo-localization";
 
 const algoritm: any = function () {

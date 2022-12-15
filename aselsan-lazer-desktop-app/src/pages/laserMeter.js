@@ -5,13 +5,16 @@ import { Spin } from "antd";
 import Colors from "../constants/Colors";
 import { findLocation } from "../functions/findLocation";
 import BLEService from "../services/BLEService";
-import { info } from "../functions/toast";
+import { info, success } from "../functions/toast";
 import { Params } from "../constants/Params";
 import { distanceConversion } from "../functions/Conversions";
 import { useHistory } from "react-router-dom";
 import { string } from "../locales";
 import { DistanceUnitTypes } from "../constants/Config";
 import { ipcRenderer } from "electron";
+import { MStore } from "../stores/MainStore";
+import { osName, OsTypes } from "react-device-detect";
+const utmObj = require("utm-latlng");
 
 let _compass = false;
 let old_heading = 0;
@@ -43,16 +46,29 @@ const LaserMeter = () => {
   const [compass, setCompass] = useState(_compass);
   const [distance_unit, setDistanceUnit] = useState({});
   const [loading, setLoading] = useState(false);
+  const [firstLocation, setFirstLocation] = useState(true);
+  const [device, setDevice] = useState("loading");
 
   const target_len = Array.isArray(targets) ? targets.length : 0;
 
   useEffect(() => {
-    try {
-      ipcRenderer.send("get-location", null);
-      ipcRenderer.on("find-location", getLocation);
-    } catch (e) {}
+    const device = ble.getDevice();
+    setDevice(device);
 
     BLEService.event.on("distance_and_compass", _setData);
+
+    switch (osName) {
+      case OsTypes.Windows:
+      case OsTypes.WindowsPhone:
+        try {
+          ipcRenderer.send("get-location", null);
+          ipcRenderer.on("find-location", getLocation);
+        } catch (e) {}
+        break;
+      default:
+        getLocation(null, ["41.015137", "28.979530", "40", "1", "1"]);
+        break;
+    }
 
     return () => {
       BLEService.event.removeListener("distance_and_compass", _setData);
@@ -61,7 +77,6 @@ const LaserMeter = () => {
   }, []);
 
   async function getLocation(e, res) {
-    console.warn(res);
     _location = {
       ...coords,
       latitude: parseFloat(res[0].replace(",", ".")),
@@ -73,10 +88,14 @@ const LaserMeter = () => {
       longitudeDelta: 0.0421,
     };
     setLocation(_location);
-    await ble.sendDataToDevice(
-      "distance_and_compass",
-      param.distance_and_compass.getHex
-    );
+    if (!firstLocation) {
+      ble.sendDataToDevice(
+        "distance_and_compass",
+        param.distance_and_compass.getHex
+      );
+    } else {
+      setFirstLocation(false);
+    }
   }
 
   function _setData({
@@ -168,9 +187,20 @@ const LaserMeter = () => {
     }
   }
   async function findTarget() {
-    info("Atış Yapılıyor...");
+    info(string["atisyapiliyor"]);
     setLoading(true);
-    ipcRenderer.send("get-location", null);
+
+    switch (osName) {
+      case OsTypes.Windows:
+      case OsTypes.WindowsPhone:
+        try {
+          ipcRenderer.send("get-location", null);
+        } catch (e) {}
+        break;
+      default:
+        getLocation(null, ["41.015137", "28.979530", "40", "1", "1"]);
+        break;
+    }
   }
 
   const Marker = ({ my, title }) => {
@@ -279,11 +309,44 @@ const LaserMeter = () => {
     ].join("");
   }
 
+  const utm = new utmObj();
+
+  if (!device) {
+    return (
+      <div className="column contain center">
+        <div style={{ fontSize: 20, color: Colors.text, fontWeight: "bold" }}>
+          {string["101"]}
+        </div>
+        <div
+          className="btn"
+          onClick={() => {
+            history.push("select-device");
+          }}
+          style={{
+            margin: 10,
+            padding: "10px 15px",
+            backgroundColor: Colors.primary,
+            borderRadius: 10,
+            fontSize: 16,
+            color: Colors.text,
+            fontWeight: "bold",
+          }}
+        >
+          {string.simdibaglan}
+        </div>
+      </div>
+    );
+  }
+
+  if (device == "loading") {
+    return null;
+  }
+
   return (
     <div style={{ height: "90vh", width: "100%" }}>
       <div ref={div} style={{ display: "flex", height: "55%", width: "100%" }}>
         <GoogleMapReact
-          bootstrapURLKeys={{ key: "AIzaSyAJ_6n7wqqK8sIk0LV6IqO3OuukpMIbQMM" }}
+          bootstrapURLKeys={{ key: "AIzaSyAfEVYF6sbIlbFX_5td27xdbIj4hW0ixvk" }}
           center={center}
           zoom={zoom}
           yesIWantToUseGoogleMapApiInternals
@@ -529,7 +592,15 @@ const LaserMeter = () => {
                               fontWeight: "bold",
                             }}
                           >
-                            {ConvertDDToDMS(location.latitude) + " N"}
+                            {MStore.hedefkonumgosterimtipi === "utm"
+                              ? utm.convertLatLngToUtm(
+                                  location.latitude,
+                                  location.longitude,
+                                  3
+                                ).Easting +
+                                " " +
+                                string["saga"]
+                              : ConvertDDToDMS(location.latitude) + " N"}
                           </div>
                           <div
                             style={{
@@ -538,7 +609,15 @@ const LaserMeter = () => {
                               fontWeight: "500",
                             }}
                           >
-                            {ConvertDDToDMS(location.longitude) + " E"}
+                            {MStore.hedefkonumgosterimtipi === "utm"
+                              ? utm.convertLatLngToUtm(
+                                  location.latitude,
+                                  location.longitude,
+                                  3
+                                ).Northing +
+                                " " +
+                                string["yukariya"]
+                              : ConvertDDToDMS(location.longitude) + " E"}
                           </div>
                         </div>
                         <div
@@ -572,7 +651,12 @@ const LaserMeter = () => {
                               fontWeight: "500",
                             }}
                           >
-                            {ConvertDDToDMS(latitude) + " N"}
+                            {MStore.hedefkonumgosterimtipi === "utm"
+                              ? utm.convertLatLngToUtm(latitude, longitude, 3)
+                                  .Easting +
+                                " " +
+                                string["saga"]
+                              : ConvertDDToDMS(latitude) + " N"}
                           </div>
                           <div
                             style={{
@@ -581,7 +665,67 @@ const LaserMeter = () => {
                               fontWeight: "500",
                             }}
                           >
-                            {ConvertDDToDMS(longitude) + " E"}
+                            {MStore.hedefkonumgosterimtipi === "utm"
+                              ? utm.convertLatLngToUtm(latitude, longitude, 3)
+                                  .Northing +
+                                " " +
+                                string["yukariya"]
+                              : ConvertDDToDMS(longitude) + " E"}
+                          </div>
+                          <div
+                            onClick={() => {
+                              let txt =
+                                MStore.hedefkonumgosterimtipi === "utm"
+                                  ? utm.convertLatLngToUtm(
+                                      latitude,
+                                      longitude,
+                                      3
+                                    ).Easting +
+                                    " " +
+                                    string["saga"]
+                                  : ConvertDDToDMS(latitude) + " N";
+
+                              txt += "\n";
+
+                              txt +=
+                                MStore.hedefkonumgosterimtipi === "utm"
+                                  ? utm.convertLatLngToUtm(
+                                      latitude,
+                                      longitude,
+                                      3
+                                    ).Northing +
+                                    " " +
+                                    string["yukariya"]
+                                  : ConvertDDToDMS(longitude) + " E";
+
+                              navigator.clipboard.writeText(txt);
+
+                              success(string["hedefkonumkopyalandi"]);
+                            }}
+                            className="flex row center btn"
+                            style={{
+                              padding: "10px 15px",
+                              borderRadius: 10,
+                              marginTop: 5,
+                              backgroundColor: Colors.primary,
+                            }}
+                          >
+                            <div
+                              style={{
+                                color: Colors.white,
+                                fontWeight: "bold",
+                                fontSize: 14,
+                                marginRight: 5,
+                              }}
+                            >
+                              {string.paylas}
+                            </div>
+                            <img
+                              src={
+                                require("../assets/images/share.png").default
+                              }
+                              style={{ width: 18, height: 18 }}
+                            />
                           </div>
                         </div>
                       </div>

@@ -1,96 +1,110 @@
-import {string} from "../locales";
-const shell = require('electron').shell;
+import { string } from "../locales";
+import { success } from "../functions/toast";
+const shell = require("electron").shell;
 
-export const contacts={
-  Phone:{
-    title:"telefon",
-    value:"+0850 360 10 30",
-    onPress:(phone:any)=>{
-      shell.openExternal(`tel:${phone}`)
-    }
+export const contacts = {
+  Address: {
+    title: "adres",
+    value:
+      "Balıkhisar Mahallesi Koca Seyit Onbaşı Caddesi No: 1 Akyurt-Ankara P.K. 20 Akyurt, 06750 Ankara, Türkiye",
+    onPress: (address: any) => {
+      shell.openExternal(`https://goo.gl/maps/mQzWFxXfz91hY4DL6`);
+    },
   },
-  Email:{
-    title:"email",
-    value:"aselsan@hs02.kep.tr",
-    onPress:(email:any)=>{
-      shell.openExternal(`mailto:${email}`)
-    }
+  Email: {
+    title: "mgeo_email",
+    value: "mgeo_musteri@aselsan.com.tr",
+    onPress: (email: any) => {
+      shell.openExternal(`mailto:${email}`);
+    },
   },
-  WebSite:{
-    title:"website",
-    value:"www.aselsan.com.tr",
-    onPress:(web:any)=>{
-      shell.openExternal(`https://${web}`)
-    }
+  Phone: {
+    title: "mgeo_telefon",
+    value: "+90 850 360 10 30",
+    onPress: (phone: any) => {
+      shell.openExternal(`tel:${phone}`);
+    },
   },
-  Address:{
-    title:"adres",
-    value:"P.K.1, 06200, Yenimahalle | Ankara, Türkiye",
-    onPress:(address:any)=>{
-      shell.openExternal(`http://maps.google.com/?q=1200 ${address}`)
-    }
-  }
-}
+  Phone2: {
+    title: "telefon",
+    value: "+90 312 847 53 00",
+    onPress: (phone: any) => {
+      shell.openExternal(`tel:${phone}`);
+    },
+  },
+  Faks: {
+    title: "faks",
+    value: "+90 312 847 53 20",
+    onPress: (phone: string) => {
+      navigator.clipboard.writeText(phone);
 
-export const sss = string.dil=="tr"?{
-  Application:[
-    {
-      title:"Uygulama Soru 1",
-      content:"Cevap 1"
+      success(string["fakskopyalandi"]);
     },
-    {
-      title:"Uygulama Soru 2",
-      content:"Cevap 2"
-    },
-    {
-      title:"Uygulama Soru 3",
-      content:"Cevap 3"
-    }
-  ],
-  DEVICE:[
-    {
-      title:"Cihaz Soru 1",
-      content:"Cevap 1"
-    },
-    {
-      title:"Cihaz Soru 2",
-      content:"Cevap 2"
-    },
-    {
-      title:"Cihaz Soru 3",
-      content:"Cevap 3"
-    }
-  ]
-}:{
-  Application:[
-    {
-      title:"Application Ask 1",
-      content:"Answer 1"
-    },
-    {
-      title:"Application Ask 2",
-      content:"Answer 2"
-    },
-    {
-      title:"Application Ask 3",
-      content:"Answer 3"
-    }
-  ],
-  DEVICE:[
-    {
-      title:"Device Ask 1",
-      content:"Answer 1"
-    },
-    {
-      title:"Device Ask 2",
-      content:"Answer 2"
-    },
-    {
-      title:"Device Ask 3",
-      content:"Answer 3"
-    }
-  ]
-}
+  },
+};
+
+export const sss =
+  string.dil == "tr"
+    ? {
+        Application: [
+          {
+            title: "Uygulama Soru 1",
+            content: "Cevap 1",
+          },
+          {
+            title: "Uygulama Soru 2",
+            content: "Cevap 2",
+          },
+          {
+            title: "Uygulama Soru 3",
+            content: "Cevap 3",
+          },
+        ],
+        DEVICE: [
+          {
+            title: "Cihaz Soru 1",
+            content: "Cevap 1",
+          },
+          {
+            title: "Cihaz Soru 2",
+            content: "Cevap 2",
+          },
+          {
+            title: "Cihaz Soru 3",
+            content: "Cevap 3",
+          },
+        ],
+      }
+    : {
+        Application: [
+          {
+            title: "Application Ask 1",
+            content: "Answer 1",
+          },
+          {
+            title: "Application Ask 2",
+            content: "Answer 2",
+          },
+          {
+            title: "Application Ask 3",
+            content: "Answer 3",
+          },
+        ],
+        DEVICE: [
+          {
+            title: "Device Ask 1",
+            content: "Answer 1",
+          },
+          {
+            title: "Device Ask 2",
+            content: "Answer 2",
+          },
+          {
+            title: "Device Ask 3",
+            content: "Answer 3",
+          },
+        ],
+      };
 
 export const HomeScreenTypes = {
   MesafeVePusula: {
@@ -104,50 +118,48 @@ export const HomeScreenTypes = {
   Mesafe: {
     id: 2,
     value: "mesafe",
-  }
+  },
 };
 
 export const DistanceUnitTypes = {
   Metre: {
     id: 0,
     value: "metre",
-    symbol:"m",
-    toFeet:((f:number)=>parseFloat((f * 3.281).toString())),
+    symbol: "m",
+    toFeet: (f: number) => parseFloat((f * 3.281).toString()),
   },
   Feet: {
     id: 1,
     value: "feet",
-    symbol:"ft",
-    toMeter:((f:number)=>parseFloat((f / 3.281).toString()))
-  }
+    symbol: "ft",
+    toMeter: (f: number) => parseFloat((f / 3.281).toString()),
+  },
 };
 
 export const AngleUnitTypes = {
   Derece: {
     id: 0,
     value: "derece",
-    symbol:"°",
+    symbol: "°",
   },
   Milyem6000: {
     id: 1,
     value: "6000 Milyem",
-    symbol:"m/",
-    toDegree:((m:number)=>m*(360/6000))
+    symbol: "m/",
+    toDegree: (m: number) => m * (360 / 6000),
   },
   Milyem6300: {
     id: 2,
     value: "6300 Milyem",
-    symbol:"m/",
-    toDegree:((m:number)=>m*(360/6300))
-
+    symbol: "m/",
+    toDegree: (m: number) => m * (360 / 6300),
   },
   Milyem6400: {
     id: 3,
     value: "6400 Milyem",
-    symbol:"m/",
-    toDegree:((m:number)=>m*(360/6400))
-  }
-
+    symbol: "m/",
+    toDegree: (m: number) => m * (360 / 6400),
+  },
 };
 
 export const OdometerActivityTypes = {
@@ -158,7 +170,7 @@ export const OdometerActivityTypes = {
   Acik: {
     id: "1",
     value: "acik",
-  }
+  },
 };
 
 export const CompassActivityTypes = {
@@ -169,7 +181,7 @@ export const CompassActivityTypes = {
   Acik: {
     id: "1",
     value: "acik",
-  }
+  },
 };
 
 export const BluetoothActivityTypes = {
@@ -180,7 +192,7 @@ export const BluetoothActivityTypes = {
   Acik: {
     id: "1",
     value: "acik",
-  }
+  },
 };
 
 export const OdometerErrorTypes = {
@@ -199,7 +211,7 @@ export const OdometerErrorTypes = {
   HataVar: {
     id: "11",
     value: "hatavar",
-  }
+  },
 };
 
 export const CompassErrorTypes = {
@@ -237,7 +249,7 @@ export const BluetoothErrorTypes = {
   HataYok: {
     id: "11",
     value: "hatayok",
-  }
+  },
 };
 
 export const BatteryErrorTypes = {
@@ -256,7 +268,7 @@ export const BatteryErrorTypes = {
   PilGucuZayif: {
     id: "11",
     value: "pilgucuzayif",
-  }
+  },
 };
 
 export const ArticleMode = {
@@ -271,9 +283,8 @@ export const ArticleMode = {
   Otomatik: {
     id: 2,
     value: "otomatik",
-  }
+  },
 };
-
 
 export const Language = {
   Turkce: {
@@ -283,9 +294,8 @@ export const Language = {
   Ingilizce: {
     id: 1,
     value: "ingilizce",
-  }
+  },
 };
-
 
 export const NightVisionMode = {
   Kapali: {
@@ -295,9 +305,8 @@ export const NightVisionMode = {
   Acik: {
     id: 1,
     value: "acik",
-  }
+  },
 };
-
 
 export const DeviceSleepTime = {
   t0: {
@@ -306,30 +315,29 @@ export const DeviceSleepTime = {
   },
   t20: {
     id: 1,
-    value: "20 "+string.saniye,
+    value: "20 " + string.saniye,
   },
   t30: {
     id: 2,
-    value: "30 "+string.saniye,
+    value: "30 " + string.saniye,
   },
   t60: {
     id: 3,
-    value: "1 "+string.dakika,
+    value: "1 " + string.dakika,
   },
   t120: {
     id: 4,
-    value: "2 "+string.dakika,
+    value: "2 " + string.dakika,
   },
   t300: {
     id: 5,
-    value: "5 "+string.dakika,
+    value: "5 " + string.dakika,
   },
   t600: {
     id: 6,
-    value: "10 "+string.dakika,
-  }
+    value: "10 " + string.dakika,
+  },
 };
-
 
 export const BluetoothSleepTime = {
   t0: {
@@ -338,28 +346,28 @@ export const BluetoothSleepTime = {
   },
   t20: {
     id: 1,
-    value: "20 "+string.saniye,
+    value: "20 " + string.saniye,
   },
   t30: {
     id: 2,
-    value: "30 "+string.saniye,
+    value: "30 " + string.saniye,
   },
   t60: {
     id: 3,
-    value: "1 "+string.dakika,
+    value: "1 " + string.dakika,
   },
   t120: {
     id: 4,
-    value: "2 "+string.dakika,
+    value: "2 " + string.dakika,
   },
   t300: {
     id: 5,
-    value: "5 "+string.dakika,
+    value: "5 " + string.dakika,
   },
   t600: {
     id: 6,
-    value: "10 "+string.dakika,
-  }
+    value: "10 " + string.dakika,
+  },
 };
 
 export function findType(data: any, id: any, key = "value") {

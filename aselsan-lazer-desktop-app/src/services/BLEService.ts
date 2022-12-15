@@ -2,34 +2,17 @@ import { AngleUnitTypes, DistanceUnitTypes } from "../constants/Config";
 import { error } from "../functions/toast";
 import { findData } from "../functions/findData";
 import DeviceEventEmitter from "events";
-import { HexToBase64 } from "../functions/Buffer";
+import { Base64ToHex, HexToBase64 } from "../functions/Buffer";
 import { IStore } from "../stores/InstantStore";
 import { l_moment } from "../functions/cMoment";
-
-let exampleRes: any = {
-  serial_no: "tlEJEQU=",
-  device_version: "tREEESU=",
-  temperature: "tR4EBT0=",
-  pressure: "tmgEBAUFPQ==",
-  shot_counter: "tlMAAAIBPQ==",
-  statuses: "tRCjtAQ=",
-  distance_unit: "tSIAALM=",
-  article_mode: "tRgAAbM=",
-  distance_and_compass: "tR0AAIf/AKwQAEQzAAEEABUAGQ==",
-  language: "tRsAALM=",
-  angle_unit_type: "tSAAA7M=",
-  night_vision_mode: "tSQAAbM=",
-  device_sleep_time: "tSYABbM=",
-  bluetooth_sleep_time: "tSoABrM=",
-  bottom_door_lock: "tRUD6LM=",
-  top_door_lock: "tRcA6LM=",
-  magnetic_declination_angle: "tSwK87M=",
-};
+import { createIV, encrypt } from "../functions/AES";
+import { flattenDeep } from "lodash";
+import { string } from "../locales";
 
 class BLEService {
   private device: any = null;
   public characteristic: any = null;
-  private static _this: BLEService;
+  static _this: BLEService;
   private static event: DeviceEventEmitter = new DeviceEventEmitter();
 
   private data = {
@@ -107,116 +90,57 @@ class BLEService {
     return BLEService._this.device;
   }
 
-  public async sendDataToDevice(_key: string, data: any) {
-    IStore.setLogger({
-      type: "send",
-      key: _key,
-      data,
-      date: l_moment(),
-      res: "sending...",
-    });
-
+  public sendDataToDevice(_key: string, data: any) {
     let device = BLEService._this.getDevice();
     if (!device) {
       throw "no_connect1";
     }
 
-    return new Promise((resolve, reject) => {
-      IStore.setLogger({
-        type: "send",
-        key: _key,
-        data,
-        date: l_moment(),
-        res: "success",
+    if (IStore.isEncryptedCommunication) {
+      const length = data.length % 16;
+      const padding = 16 - length;
+
+      data = data.concat(new Array(padding).fill(0x00));
+
+      const iv = createIV();
+
+      let encrypted = encrypt(data, iv);
+
+      let message: any = [...iv, ...encrypted].map((e: number) => {
+        if (e == 0x7e) {
+          return [0x7d, 0x5e];
+        } else if (e == 0x7d) {
+          return [0x7d, 0x5d];
+        }
+
+        return e;
       });
 
-      setTimeout(() => {
-        IStore.setLogger({
-          type: "receive",
-          key: "",
-          data: exampleRes[_key],
-          date: l_moment(),
-          res: "data received",
-        });
-        const { key, value: res }: any = findData(exampleRes[_key]);
-        IStore.setLogger({
-          type: "receive",
-          key,
-          data: res,
-          date: l_moment(),
-          res: "success",
-        });
-        BLEService._this.setData({ [key]: res });
+      message = flattenDeep(message);
 
-        // @ts-ignore
-        BLEService.event.emit("monitor", {
-          key,
-          value: res,
-          all_data: BLEService._this.getData(),
-        });
+      data = [0x7e, ...message, 0x7e];
+    }
 
-        // @ts-ignore
-        BLEService.event.emit(key, res);
-
-        resolve(true);
-      }, Math.floor(Math.random() * 1000 + 2000));
-    });
-
-    return new Promise((resolve, reject) => {
-      device
-        .getPrimaryService("2456e1b9-26e2-8f83-e744-f34f01e9d701")
-        .then((service: any) => {
-          return service.getCharacteristic("battery_level");
-        })
-        .then((characteristic: any) => {
-          return characteristic.writeValue(HexToBase64(data));
-        })
-        .then(() => {
-          IStore.setLogger({
-            type: "send",
-            key: _key,
-            data,
-            date: l_moment(),
-            res: "success",
-          });
-          resolve(true);
-        })
-        .catch((e: any) => {
-          IStore.setLogger({
-            type: "send",
-            key: _key,
-            data,
-            date: l_moment(),
-            res: "error " + JSON.stringify(e),
-          });
-
-          reject(e);
-          error();
-        });
+    IStore.queueService.sendMessageQueue.push({
+      data,
     });
   }
 
   public startListener() {
     const device = BLEService._this.getDevice();
 
-    if (!device || device == "test") throw "no_connect1";
+    if (!device) throw "no_connect1";
 
-    device.addEventListener("gattserverdisconnected", () => {
+    /* device.addEventListener("gattserverdisconnected", () => {
       BLEService._this.setDevice(null);
-    });
-
-    IStore.setLogger({
-      type: "receive",
-      key: "",
-      data: "",
-      date: l_moment(),
-      res: "listener started",
-    });
+    });*/
 
     device
       .getPrimaryService("2456e1b9-26e2-8f83-e744-f34f01e9d701")
       .then((service: any) => {
-        return service.getCharacteristic("battery_level");
+        return service.getCharacteristic(
+          "2456e1b9-26e2-8f83-e744-f34f01e9d703"
+        );
       })
       .then((_characteristic: any) => {
         BLEService._this.characteristic = _characteristic;
@@ -224,51 +148,28 @@ class BLEService {
           "characteristicvaluechanged",
           BLEService._this.onChangeListener
         );
+        BLEService._this.characteristic.startNotifications();
       })
       .catch((e: any) => {
-        console.warn(e);
-        error("Bağlantı Hatası");
+        // console.warn(e);
+        error(string["baglantihatasi"]);
       });
   }
 
   public onChangeListener(event: any) {
     let value = event.target.value;
 
-    IStore.setLogger({
-      type: "receive",
-      key: "",
-      data: value,
-      date: l_moment(),
-      res: "data received",
-    });
-
     if (value) {
-      const { key, value: res }: any = findData(value);
-
-      IStore.setLogger({
-        type: "receive",
-        key,
-        data: JSON.stringify(res),
-        date: l_moment(),
-        res: "success",
+      IStore.queueService.receiveMessageQueue.push({
+        data: [...new Uint8Array(value.buffer)],
       });
-
-      BLEService._this.setData({ [key]: res });
-
-      // @ts-ignore
-      BLEService.event.emit("monitor", {
-        key,
-        value: res,
-        all_data: BLEService._this.getData(),
-      });
-
-      // @ts-ignore
-      BLEService.event.emit(key, res);
     }
   }
 
   public stopListener() {
     try {
+      IStore.queueService.RECEIVE_MESSAGE_BUFFER = [];
+      IStore.isEncryptedCommunication = false;
       BLEService._this.characteristic.removeEventListener(
         "characteristicvaluechanged",
         BLEService._this.onChangeListener

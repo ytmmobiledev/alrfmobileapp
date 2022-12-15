@@ -3,18 +3,12 @@ import { chunk, findIndex, isEqual } from "lodash";
 import { HexToBase64 } from "../functions/Buffer";
 import BLEService from "./BLEService";
 import { IStore } from "../stores/InstantStore";
-import {
-  createIV,
-  decrypt,
-  encrypt,
-  Params,
-  PROCESS_KEYS,
-  PROCESS_KEYS_LENGTH,
-} from "../constants/Params";
+import { Params, PROCESS_KEYS, PROCESS_KEYS_LENGTH } from "../constants/Params";
 import { error, success } from "../functions/toast";
 import { string } from "../locales";
 import { findData } from "../functions/findData";
 import { DeviceEventEmitter } from "react-native";
+import { createIV, decrypt, encrypt } from "../functions/AES";
 
 const params = Params();
 
@@ -189,7 +183,7 @@ export default class QueueService {
       switch (command) {
         case PROCESS_KEYS.KimlikDogrulamaSorgu:
           BLEService._this.sendDataToDevice(
-            "kimlikdurumbilgisi",
+            params.kimlikdurumbilgisi.title,
             params.kimlikdurumbilgisi.getHex(
               PROCESS_KEYS.KimlikDogrulamaSorgu,
               0x00
@@ -201,27 +195,22 @@ export default class QueueService {
           const message = data.slice(2, 18);
           const encrypted = encrypt(message, iv);
 
-          const _message = params.kimlikdogrulamasorgususifreli.getHex(
-            iv,
-            encrypted
-          );
-
           BLEService._this.sendDataToDevice(
-            "kimlikdogrulamasorgususifreli",
-            _message
+            params.kimlikdogrulamasorgususifreli.title,
+            params.kimlikdogrulamasorgususifreli.getHex(iv, encrypted)
           );
           break;
 
         case PROCESS_KEYS.KimlikDogrulama:
           BLEService._this.sendDataToDevice(
-            "kimlikdurumbilgisi",
+            params.kimlikdurumbilgisi.title,
             params.kimlikdurumbilgisi.getHex(PROCESS_KEYS.KimlikDogrulama, 0x00)
           );
 
           IStore.controlData = createIV();
 
           BLEService._this.sendDataToDevice(
-            "kimlikdogrulamasorgu",
+            params.kimlikdogrulamasorgu.title,
             params.kimlikdogrulamasorgu.getHex(IStore.controlData)
           );
 
@@ -260,7 +249,7 @@ export default class QueueService {
           const isOk = isEqual(decrypted, IStore.controlData);
 
           BLEService._this.sendDataToDevice(
-            "kimlikdurumbilgisi",
+            params.kimlikdurumbilgisi.title,
             params.kimlikdurumbilgisi.getHex(
               PROCESS_KEYS.KimlikDogrulamaSifreli,
               isOk ? 0x00 : 0x04

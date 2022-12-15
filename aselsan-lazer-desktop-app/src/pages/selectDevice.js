@@ -6,11 +6,13 @@ import { useHistory } from "react-router-dom";
 import { IStore } from "../stores/InstantStore";
 import { error } from "../functions/toast";
 import { Spin } from "antd";
+import { Params } from "../constants/Params";
 const { ipcRenderer } = require("electron");
 
 const SelectDevice = () => {
   const ble = IStore.ble;
   const history = useHistory();
+  const param = Params();
 
   const [devices, setDevices] = useState([]);
   const [isSearchStarted, setIsSearchStarted] = useState(false);
@@ -20,21 +22,33 @@ const SelectDevice = () => {
   function scan() {
     setIsSearchStarted(true);
     navigator.bluetooth
-      .requestDevice({ acceptAllDevices: true })
+      .requestDevice({
+        filters: [{ namePrefix: "ALRF" }],
+        optionalServices: ["2456e1b9-26e2-8f83-e744-f34f01e9d701"],
+      })
       .then((device) => {
         device.gatt
           .connect()
           .then((service) => {
-            console.warn(device.connected);
             IStore.setLoading(false);
             ble.setDevice(service);
-            history.goBack();
+            ble.startListener();
+
+            IStore.navigation = history;
+
+            ble.sendDataToDevice(
+              param.kimlikdogrulama.title,
+              param.kimlikdogrulama.getHex
+            );
           })
           .catch((e) => {
             IStore.setLoading(false);
             setDevices([]);
-            console.warn(e);
-            error();
+            // console.warn(e);
+            error(
+              string["baglantihatasi"],
+              string["baglantibasarisizaciklama"]
+            );
           });
       });
 
@@ -56,7 +70,7 @@ const SelectDevice = () => {
           }}
         />
       </div>
-      <div
+      {/*<div
         className="button"
         onClick={() => {
           IStore.setLoading(false);
@@ -66,7 +80,7 @@ const SelectDevice = () => {
         style={{ alignSelf: "center" }}
       >
         Demo Verileri Kullan
-      </div>
+      </div>*/}
 
       <div
         className={"flex contain column scroll"}
@@ -80,10 +94,6 @@ const SelectDevice = () => {
                   key={index}
                   onClick={() => {
                     IStore.setLoading(true);
-                    setTimeout(() => {
-                      IStore.setLoading(false);
-                      setDevices([]);
-                    }, 10000);
                     ipcRenderer.send("selected-device", deviceId);
                   }}
                   className="button"

@@ -196,7 +196,7 @@ function LaserMeter({ navigation }: any) {
   }
 
   async function findTarget() {
-    info("Atış Yapılıyor...");
+    info(string["atisyapiliyor"]);
     setLoading(true);
     await getLocation();
     ble.sendDataToDevice(

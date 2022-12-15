@@ -106,7 +106,10 @@ function ConnectDevice({ navigation }: any) {
         ble.setDeviceID(device.id);
         ble.startListener();
 
-        ble.sendDataToDevice("kimlik_dogrulama", param.kimlikdogrulama.getHex);
+        ble.sendDataToDevice(
+          param.kimlikdogrulama.title,
+          param.kimlikdogrulama.getHex
+        );
       })
       .catch((e) => {
         IStore.loadingConnect = -1;

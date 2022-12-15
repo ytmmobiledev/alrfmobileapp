@@ -17,8 +17,8 @@ const Device = () => {
   const usage_params = {
     serial_no: params.serial_no,
     device_version: params.device_version,
-    temperature: params.temperature,
-    pressure: params.pressure,
+    // temperature: params.temperature,
+    // pressure: params.pressure,
     shot_counter: params.shot_counter,
     statuses: params.statuses,
   };
@@ -95,7 +95,7 @@ const Device = () => {
 
   function getValues() {
     for (let [key, param] of Object.entries(usage_params)) {
-      if (param.getHex) ble.sendDataToDevice(key, param.getHex).then(() => {});
+      if (param.getHex) ble.sendDataToDevice(key, param.getHex)
     }
   }
 

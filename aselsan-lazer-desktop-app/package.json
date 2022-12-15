@@ -1,10 +1,9 @@
 {
-  "name": "Aselsan",
-  "version": "0.2.0",
-  "description": "Lazer mesafe ölçer",
-  "author": "aselsan",
+  "name": "cetvel",
+  "version": "1.0.0",
+  "author": "cyberistanbul",
   "build": {
-    "appId": "com.cyberistanbul.aselsan",
+    "appId": "com.cyberistanbul.aselsanlazer",
     "mac": {
       "target": "dmg",
       "category": "demo"
@@ -46,13 +45,16 @@
     "@types/node": "^17.0.35",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.4",
+    "aes-js": "^3.1.2",
     "antd": "^4.20.6",
     "cross-env": "^7.0.3",
-    "crypto-es": "^1.2.7",
     "dotenv": "^16.0.1",
     "electron-cgi": "^1.0.6",
     "electron-is-dev": "^1.2.0",
+    "fastq": "^1.14.0",
+    "geomagnetism": "^0.1.1",
     "google-map-react": "^2.1.10",
+    "lodash": "^4.17.21",
     "mobx": "5.15.6",
     "mobx-persist": "0.4.1",
     "mobx-persist-store": "0.5.20",
@@ -61,6 +63,8 @@
     "moment": "^2.29.3",
     "node-sass": "^7.0.1",
     "react": "^17.0.1",
+    "react-confirm-alert": "2.x",
+    "react-device-detect": "^2.2.2",
     "react-dom": "^17.0.1",
     "react-geolocated": "^4.0.1",
     "react-router-dom": "^5.2.0",
@@ -68,6 +72,7 @@
     "reactjs-bottom-navigation": "^1.0.4",
     "swiper": "^8.2.1",
     "typescript": "^4.6.4",
+    "utm-latlng": "^1.0.7",
     "webpack-set-environment": "^1.0.1"
   },
   "scripts": {
@@ -96,6 +101,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.191",
     "babel-plugin-import": "1.13.0",
     "concurrently": "^5.3.0",
     "customize-cra": "0.9.1",
