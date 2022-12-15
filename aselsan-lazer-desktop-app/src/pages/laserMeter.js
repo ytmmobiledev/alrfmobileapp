@@ -46,12 +46,12 @@ const LaserMeter = () => {
   const [compass, setCompass] = useState(_compass);
   const [distance_unit, setDistanceUnit] = useState({});
   const [loading, setLoading] = useState(false);
-  const [firstLocation, setFirstLocation] = useState(true);
   const [device, setDevice] = useState("loading");
 
   const target_len = Array.isArray(targets) ? targets.length : 0;
 
   useEffect(() => {
+    IStore.firsLocation = true;
     const device = ble.getDevice();
     setDevice(device);
 
@@ -88,13 +88,13 @@ const LaserMeter = () => {
       longitudeDelta: 0.0421,
     };
     setLocation(_location);
-    if (!firstLocation) {
+    if (!IStore.firsLocation) {
       ble.sendDataToDevice(
         "distance_and_compass",
         param.distance_and_compass.getHex
       );
     } else {
-      setFirstLocation(false);
+      IStore.firsLocation = false;
     }
   }
 

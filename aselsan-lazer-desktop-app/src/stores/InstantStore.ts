@@ -27,6 +27,8 @@ class InstantStoreC {
   @observable logger: any = [];
   @observable tab_index: string = "olcum";
 
+  @observable firsLocation: boolean = true;
+
   isEncryptedCommunication: boolean = false;
 
   @observable loadingConnect: number = -1;
