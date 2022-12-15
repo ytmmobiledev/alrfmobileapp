@@ -1,9 +1,10 @@
 {
   "name": "cetvel",
   "version": "1.0.0",
-  "author": "cyberistanbul",
+  "author": "Cyber İstanbul A.Ş.",
   "build": {
     "appId": "com.cyberistanbul.aselsanlazer",
+    "productName": "CETVEL Mobil Uygulama",
     "mac": {
       "target": "dmg",
       "category": "demo"

@@ -59,18 +59,23 @@ function LaserMeter({ navigation }: any) {
   const [distance_unit, setDistanceUnit]: any = useState({});
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        alert(string["konumizni"]);
-        return;
-      }
+  useFocusEffect(
+    React.useCallback(() => {
+      (async () => {
+        setLoading(false);
+        setTargets(null);
 
-      getCompass();
-      await getLocation();
-    })();
-  }, []);
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          alert(string["konumizni"]);
+          return;
+        }
+
+        getCompass();
+        await getLocation();
+      })();
+    }, [])
+  );
 
   async function getLocation() {
     const { coords } = await Location.getCurrentPositionAsync({
