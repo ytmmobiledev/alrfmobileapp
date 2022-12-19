@@ -128,6 +128,7 @@ export const en = {
   manyetiksapmauyari:
     "The magnetic deviation angle of your location is different from the contents of the device. Would you like to update the magnetic deviation angle?",
   konumizni: "You should allow location access",
+  bluetoothizni: "You should allow bluetooth access",
   baglantibasarisiz: "Connection Failed",
   baglantibasarisizaciklama: "Please try again",
   gecersizveri: "Invalid data",

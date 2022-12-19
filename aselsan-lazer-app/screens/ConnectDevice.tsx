@@ -9,7 +9,7 @@ import { error } from "../functions/toast";
 import { FontText } from "../components/FontText";
 import { CButton } from "../components/CButton";
 import BLEService from "../services/BLEService";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, PermissionsAndroid } from "react-native";
 import * as Location from "expo-location";
 import { hp } from "../functions/responsiveScreen";
 import { useFocusEffect } from "@react-navigation/native";
@@ -41,6 +41,19 @@ function ConnectDevice({ navigation }: any) {
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
       alert(string["konumizni"]);
+      return;
+    }
+
+    const bleStatus = await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+      PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+    ]);
+
+    if (
+      bleStatus["android.permission.BLUETOOTH_CONNECT"] !== "granted" ||
+      bleStatus["android.permission.BLUETOOTH_SCAN"] !== "granted"
+    ) {
+      alert(string["bluetoothizni"]);
       return;
     }
 

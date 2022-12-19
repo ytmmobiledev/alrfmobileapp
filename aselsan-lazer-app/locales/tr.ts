@@ -125,7 +125,8 @@ export const tr = {
   hedefkonumkopyalandi: "Hedef Konumu Kopyalandı",
   manyetiksapmauyari:
     "Bulunduğunuz konumun manyetik sapma açısı cihaz içindekinden farklıdır. Manyetik sapma açısını güncellemek ister misiniz?",
-  konumizni: "Konum Eişimine İzin Vermelisiniz",
+  konumizni: "Konum Erişimine İzin Vermelisiniz",
+  bluetoothizni: "Lütfen bluetooth izinlerini veriniz.",
   baglantibasarisiz: "Bağlantı Başarısız",
   baglantibasarisizaciklama: "Lütfen tekrar deneyiniz",
   gecersizveri: "Geçersiz Veri",

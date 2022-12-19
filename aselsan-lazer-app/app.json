@@ -3,7 +3,7 @@
     "name": "CETVEL Mobil Uygulama",
     "slug": "cetvelaselsanalrf",
     "owner": "cyberistanbul",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "cetvelaselsanalrf",
@@ -29,7 +29,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.cyberistanbul.aselsanlazer",
-      "buildNumber": "1.0.1",
+      "buildNumber": "1.0.2",
       "supportsTablet": false,
       "usesIcloudStorage": true,
       "infoPlist": {
@@ -45,7 +45,7 @@
       "googleServicesFile": "./services/GoogleService-Info.plist"
     },
     "android": {
-      "versionCode": 101,
+      "versionCode": 102,
       "googleServicesFile": "./services/google-services.json",
       "package": "com.cyberistanbul.aselsanlazer",
       "permissions": [
@@ -54,7 +54,14 @@
         "RECEIVE_BOOT_COMPLETED",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.ACCESS_MEDIA_LOCATION"
+        "android.permission.ACCESS_MEDIA_LOCATION",
+        "android.permission.BLUETOOTH",
+        "android.permission.BLUETOOTH_ADVERTISE",
+        "android.permission.BLUETOOTH_ADMIN",
+        "android.permission.BLUETOOTH_SCAN",
+        "android.permission.BLUETOOTH_CONNECT",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
       ],
       "config": {
         "googleMaps": {
