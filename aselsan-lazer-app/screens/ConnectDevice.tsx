@@ -17,6 +17,7 @@ import { Params } from "../constants/Params";
 import { Observer } from "mobx-react-lite";
 import { uniqBy } from "lodash";
 import { string } from "../locales";
+import * as Device from "expo-device";
 
 let _devices = [];
 
@@ -44,17 +45,22 @@ function ConnectDevice({ navigation }: any) {
       return;
     }
 
-    const bleStatus = await PermissionsAndroid.requestMultiple([
-      PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
-      PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
-    ]);
-
-    if (
-      bleStatus["android.permission.BLUETOOTH_CONNECT"] !== "granted" ||
-      bleStatus["android.permission.BLUETOOTH_SCAN"] !== "granted"
-    ) {
-      alert(string["bluetoothizni"]);
-      return;
+    if (Device.isDevice) {
+      if (Device.osName == "Android") {
+        if (Device.osVersion >= "12") {
+          const bleStatus = await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+            PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+          ]);
+          if (
+            bleStatus["android.permission.BLUETOOTH_CONNECT"] !== "granted" ||
+            bleStatus["android.permission.BLUETOOTH_SCAN"] !== "granted"
+          ) {
+            alert(string["bluetoothizni"]);
+            return;
+          }
+        }
+      }
     }
 
     stopScan();
@@ -173,22 +179,22 @@ function ConnectDevice({ navigation }: any) {
   }
 
   /* if (!Array.isArray(devices) || !devices.length) {
-    return (
-      <CView flex={1} center color="darkGray">
-        <TouchableOpacity
-          activeOpacity={1}
-          onLongPress={() => {
-            const ble = IStore.ble;
-            ble.setDeviceID("test");
-            success();
-            navigation.pop();
-          }}
-        >
-          <Spinner color={Colors.white} />
-        </TouchableOpacity>
-      </CView>
-    );
-  }*/
+      return (
+        <CView flex={1} center color="darkGray">
+          <TouchableOpacity
+            activeOpacity={1}
+            onLongPress={() => {
+              const ble = IStore.ble;
+              ble.setDeviceID("test");
+              success();
+              navigation.pop();
+            }}
+          >
+            <Spinner color={Colors.white} />
+          </TouchableOpacity>
+        </CView>
+      );
+    }*/
 
   return (
     <Container style={{ backgroundColor: Colors.darkGray }}>

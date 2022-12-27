@@ -3,7 +3,7 @@
     "name": "CETVEL Mobil Uygulama",
     "slug": "cetvelaselsanalrf",
     "owner": "cyberistanbul",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "cetvelaselsanalrf",
@@ -29,7 +29,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.cyberistanbul.aselsanlazer",
-      "buildNumber": "1.0.2",
+      "buildNumber": "1.0.3",
       "supportsTablet": false,
       "usesIcloudStorage": true,
       "infoPlist": {
@@ -45,7 +45,7 @@
       "googleServicesFile": "./services/GoogleService-Info.plist"
     },
     "android": {
-      "versionCode": 102,
+      "versionCode": 103,
       "googleServicesFile": "./services/google-services.json",
       "package": "com.cyberistanbul.aselsanlazer",
       "permissions": [
